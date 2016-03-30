@@ -34,20 +34,22 @@ For each split, g, the following stepwise procedure is adopted to select the var
 }
 \examples{
 data(gasoline, package = "pls")
+\dontrun{
 with( gasoline, rep_pls(octane, NIR) )
+}
 
 }
 \author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+Tahir Mehmood, Kristian Hovde Liland, Solve SÃ¦bÃ¸.
 }
 \references{
-T. Mehmood, H. Martens, S. Sæbø, J. Warringer, L. Snipen, A partial 
+T. Mehmood, H. Martens, S. SÃ¦bÃ¸, J. Warringer, L. Snipen, A partial 
 least squares based algorithm for parsimonious variable selection, Algorithms for
 Molecular Biology 6 (2011).
 }
 \seealso{
 \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-\code{\link{stpls}}, \code{\link{trunc}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
+\code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
 \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
 }
 

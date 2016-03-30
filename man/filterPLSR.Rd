@@ -51,21 +51,23 @@ filter methods and determine optimum numbers of components.
 }
 \examples{
 data(gasoline, package = "pls")
+\dontrun{
 with( gasoline, filterPLSR(octane, NIR, ncomp = 10, "minimum", validation = "LOO",
  RC.threshold = c(0.1,0.5), SR.threshold = 0.5))
+}
 
 }
 \author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+Tahir Mehmood, Kristian Hovde Liland, Solve SÃ¦bÃ¸.
 }
 \references{
-T. Mehmood, K.H. Liland, L. Snipen, S. Sæbø, A review of variable selection 
+T. Mehmood, K.H. Liland, L. Snipen, S. SÃ¦bÃ¸, A review of variable selection 
 methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 118 (2012) 62-69.
 }
 \seealso{
 \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-\code{\link{stpls}}, \code{\link{trunc}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
+\code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
 \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
 }
 

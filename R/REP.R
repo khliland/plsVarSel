@@ -17,19 +17,21 @@
 #' @return Returns a vector of variable numbers corresponding to the model 
 #' having lowest prediction error.
 #'
-#' @author Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+#' @author Tahir Mehmood, Kristian Hovde Liland, Solve SÃ¦bÃ¸.
 #'
-#' @references T. Mehmood, H. Martens, S. Sæbø, J. Warringer, L. Snipen, A partial 
+#' @references T. Mehmood, H. Martens, S. SÃ¦bÃ¸, J. Warringer, L. Snipen, A partial 
 #' least squares based algorithm for parsimonious variable selection, Algorithms for
 #' Molecular Biology 6 (2011).
 #'
 #' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{trunc}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
 #' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
 #'
 #' @examples
 #' data(gasoline, package = "pls")
+#' \dontrun{
 #' with( gasoline, rep_pls(octane, NIR) )
+#' }
 #'
 #' @export
 rep_pls <- function( y, X, ncomp=5, ratio=0.75, VIP.threshold= 0.5, N=3  ){

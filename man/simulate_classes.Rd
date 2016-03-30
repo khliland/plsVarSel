@@ -35,10 +35,10 @@ str(simulate_classes(5,4,4))
 
 }
 \author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+Tahir Mehmood, Kristian Hovde Liland, Solve S?b?.
 }
 \references{
-T. Mehmood, K.H. Liland, L. Snipen, S. Sæbø, A review of variable selection 
+T. Mehmood, K.H. Liland, L. Snipen, S. S?b?, A review of variable selection 
 methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 118 (2012) 62-69.
 }

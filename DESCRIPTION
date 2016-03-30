@@ -1,10 +1,10 @@
-Encoding: latin1
+Encoding: UTF-8
 Package: plsVarSel
 Type: Package
-Title: Variable Selection in Partial Least Squares Regression
-Version: 0.6
-Date: 2016-04-01
-Author: Kristian Hovde Liland, Tahir Mehmood, Solve Sæbø
+Title: Variable Selection in Partial Least Squares
+Version: 0.7
+Date: 2016-03-30
+Author: Kristian Hovde Liland, Tahir Mehmood, Solve SÃ¦bÃ¸
 Maintainer: Kristian Hovde Liland <kristian.liland@nmbu.no>
 Description: Interfaces and methods for variable selection in Partial Least
     Squares. The methods include filter methods, wrapper methods and embedded

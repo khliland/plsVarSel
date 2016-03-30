@@ -48,7 +48,7 @@ data(gasoline, package = "pls")
 
 }
 \author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+Tahir Mehmood, Kristian Hovde Liland, Solve SÃ¦bÃ¸.
 }
 \references{
 K. Hasegawa, Y. Miyashita, K. Funatsu, GA strategy for variable selection
@@ -57,7 +57,7 @@ K. Hasegawa, Y. Miyashita, K. Funatsu, GA strategy for variable selection
 }
 \seealso{
 \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-\code{\link{stpls}}, \code{\link{trunc}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
+\code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
 \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
 }
 

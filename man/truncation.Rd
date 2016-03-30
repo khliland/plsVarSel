@@ -37,13 +37,13 @@ summary(tr)
 Kristian Hovde Liland.
 }
 \references{
-K.H. Liland, M. H?y, H. Martens, S. S?b?: Distribution based truncation for 
+K.H. Liland, M. Høy, H. Martens, S. Sæbø: Distribution based truncation for 
 variable selection in subspace methods for multivariate regression, Chemometrics and
 Intelligent Laboratory Systems 122 (2013) 103-111.
 }
 \seealso{
 \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-\code{\link{stpls}}, \code{\link{trunc}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
+\code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
 \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
 }
 

@@ -7,18 +7,18 @@
 #' @param method choice between the default \code{stpls} and alternative \code{model.frame}.
 #'
 #' @details The ST-PLS approach is more or less identical to the Sparse-PLS presented
-#' independently by Lê Cao et al. This implementation is an expansion of code from the
+#' independently by LÃ¨ Cao et al. This implementation is an expansion of code from the
 #' pls package.
 #'  
 #' @return Returns an object of class mvrV, simliar to to mvr object of the pls package.
 #'
-#' @author Solve Sæbø, Tahir Mehmood, Kristian Hovde Liland.
+#' @author Solve SÃ¦bÃ¸, Tahir Mehmood, Kristian Hovde Liland.
 #'
-#' @references S. Sæbø, T. Almøy, J. Aarøe, A.H. Aastveit, St-pls: a multi-dimensional 
+#' @references S. SÃ¦bÃ¸, T. AlmÃ¸y, J. AarÃ¸e, A.H. Aastveit, ST-PLS: a multi-dimensional 
 #' nearest shrunken centroid type classifier via pls, Journal of Chemometrics 20 (2007) 54-62.
 #'
 #' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{trunc}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
 #' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
 #'
 #' @examples
