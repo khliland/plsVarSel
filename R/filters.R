@@ -73,6 +73,21 @@ SR <- function(pls.object, opt.comp, X){
   SR
 }
 
+SR2 <- function(pls.object, opt.comp, X){
+  # Selectivity ratio
+  X   <- as.matrix(X)
+  RC  <- pls.object$coefficients[,1,opt.comp]
+  Wtp <- RC/sqrt(crossprod(RC))
+  Ttp <- X %*% Wtp
+  Ptp <- crossprod(X, Ttp)/crossprod(Ttp)[1]
+  
+  Xtp <- tcrossprod(Ttp, Ptp)
+  Xr  <- X - Xtp
+  SR  <- colSums(Xtp*Xtp)/colSums(Xr*Xr)
+  #  var.test(Xtp, Xr)
+  SR
+}
+
 #' @rdname VIP
 #' @export
 sMC <- function(pls.object, opt.comp, X, alpha_mc = 0.05){
@@ -180,7 +195,7 @@ simplify <- function(X){
 #' 
 #' @import pls
 #' @export
-filterPLSR <- function(y, X, ncomp = ncomp, ncomp.opt = c("minimum","same"), validation = "LOO", LW.threshold = NULL, RC.threshold = NULL, JT.threshold = NULL, VIP.threshold = NULL, SR.threshold = NULL, sMC.threshold = NULL,...){
+filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), validation = "LOO", LW.threshold = NULL, RC.threshold = NULL, JT.threshold = NULL, VIP.threshold = NULL, SR.threshold = NULL, sMC.threshold = NULL,...){
   
   n <- dim(X)[1]
   p <- dim(X)[2]
@@ -295,13 +310,13 @@ filterPLSR <- function(y, X, ncomp = ncomp, ncomp.opt = c("minimum","same"), val
         pls.this <- plsr(y ~ X[,selections$SR[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
         comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
         selections$SR$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
-        selectinos$SR$comps[i]  <- comp
+        selections$SR$comps[i]  <- comp
       }
     }
   }
   
   if(!is.null(sMC.threshold)){
-    sMCvalues <- sMC(pls.object, opt.comp, X)$smcF
+    sMCvalues <- sMC(pls.object, opt.comp, X)
     if(is.logical(sMC.threshold))
       sMC.threshold <- pf(0.99, df1 = n-1, df2 = n-2)
     if(length(sMC.threshold) == 1){ # Single threshold

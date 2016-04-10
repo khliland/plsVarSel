@@ -1,6 +1,6 @@
 #' @title Backward variable elimination PLS (BVE-PLS)
 #'
-#' @description A backward variable elimination procedurewas for elimination
+#' @description A backward variable elimination procedure for elimination
 #' of non informative variables.
 #'
 #' @param y vector of response values (\code{numeric} or \code{factor}).

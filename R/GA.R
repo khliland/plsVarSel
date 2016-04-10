@@ -5,7 +5,7 @@
 #'
 #' @param y vector of response values (\code{numeric} or \code{factor}).
 #' @param X numeric predictor \code{matrix}.
-#' @param GA.threshold the change for a zero for mutations and initialization (default = 0.5).
+#' @param GA.threshold the change for a zero for mutations and initialization (default = 10).
 #' @param iters the number of iterations (default = 5).
 #' @param popSize the population size (default = 100).
 #'
@@ -40,11 +40,11 @@
 #'
 #' @examples
 #' data(gasoline, package = "pls")
-#' # with( gasoline, ga_pls(octane, NIR) ) # Time consuming
+#' # with( gasoline, ga_pls(octane, NIR, GA.threshold = 10) ) # Time-consuming
 #'
 #' @importFrom genalg rbga.bin
 #' @export
-ga_pls<- function(y,X, GA.threshold=0.5, iters=5, popSize=100){ 
+ga_pls<- function(y,X, GA.threshold=10, iters=5, popSize=100){ 
   evalFunc <- evaluateX
   monitorFunc <- monitor
   n <- ncol(X)

@@ -143,7 +143,7 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
     left.vec <- left.vec[sort(order(weights)[-(1:rem)])]
     pb$tick()
   }
-  obj <- list(method = method, error = error, comps = comps, nvar = nvar, variables = variables, X = X)
+  obj <- list(min.error = min(error), min.red = which.min(error)-1, method = method, error = error, comps = comps, nvar = nvar, variables = variables, X = X)
   class(obj) <- c("shaved", "list")
   obj
 }
@@ -192,7 +192,7 @@ plot.shaved <- function(x, y, what = c('error', 'spectra'), index = "min", log =
 #' @export
 print.shaved <- function(x, ...){
   cat('Shaving using ', x$method, ':\n', sep = "")
-  cat('Minimum error = ', min(x$error), ', achieved after ', which.min(x$error)-1,
+  cat('Minimum error = ', (x$min.err), ', achieved after ', x$min.red,
       ' out of ', length(x$error)-1, ' reductions using ',
       x$nvar[which.min(x$error)], ' variables.', sep = "")
 }

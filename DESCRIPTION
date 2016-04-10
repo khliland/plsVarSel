@@ -19,7 +19,8 @@ Imports:
     pls,
     MASS,
     progress,
-    parallel
+    parallel,
+    stats
 Suggests:
     Rmpi
 RoxygenNote: 5.0.1
