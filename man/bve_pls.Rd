@@ -22,7 +22,7 @@ Returns a vector of variable numbers corresponding to the model
 having lowest prediction error.
 }
 \description{
-A backward variable elimination procedurewas for elimination
+A backward variable elimination procedure for elimination
 of non informative variables.
 }
 \details{

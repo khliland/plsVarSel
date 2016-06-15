@@ -4,7 +4,7 @@
 \alias{filterPLSR}
 \title{Optimisation of filters for Partial Least Squares}
 \usage{
-filterPLSR(y, X, ncomp = ncomp, ncomp.opt = c("minimum", "same"),
+filterPLSR(y, X, ncomp = 10, ncomp.opt = c("minimum", "same"),
   validation = "LOO", LW.threshold = NULL, RC.threshold = NULL,
   JT.threshold = NULL, VIP.threshold = NULL, SR.threshold = NULL,
   sMC.threshold = NULL, ...)

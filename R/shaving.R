@@ -15,7 +15,8 @@
 #' or fixed, \code{"max"}.
 #' @param validation type of validation for \code{plsr}. The default is "CV". If more
 #' than one set of CV segments is wanted, use a vector of lenth two, e.g. \code{c("CV",5)}.
-#' @param newdata validation data for RMSEP computations.
+#' @param newy validation response for RMSEP/error computations.
+#' @param newX validation predictors for RMSEP/error computations.
 #' @param segments see \code{mvr} for documentation of segment choices.
 #' @param ... additional arguments for \code{plsr} or \code{cvsegments}.
 #' @param x object of class \code{shaved} for plotting or printing.
@@ -52,9 +53,18 @@
 #' @importFrom progress progress_bar
 #' @export
 shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC"), prop = 0.2, min.left = 1,
-                    comp.type = c("CV", "max"), validation = c("CV", 1), newdata = NULL,
+                    comp.type = c("CV", "max"), validation = c("CV", 1), newy = NULL, newX = NULL,
                     segments = 10, ...){
   
+  modeltype <- "prediction"
+  if (is.factor(y)) {
+    modeltype <- "classification"
+    y.orig <- as.numeric(y)
+    y      <- model.matrix(~ y-1)
+    tb<-as.numeric(names(table(y)))
+    min.left <- max(min.left, dim(y)[2])
+  }
+
   # Initialization
   n <- nrow(X)
   p <- ncol(X)
@@ -113,16 +123,32 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
     }
     # factor y
     if(comp.type == "CV"){
-      opt.comp <- which.min(pls$validation$PRESS[1,])
+      if (modeltype == "prediction"){
+        opt.comp <- which.min(pls$validation$PRESS[1,])
+      } else if (modeltype == "classification"){
+        classes <- lda_from_pls_cv(pls, data$X, y.orig, comp)
+        opt.comp <- which.max(colSums(classes==y.orig))
+      }
     } else {
       opt.comp <- comp
     }
     comps[i]  <- opt.comp
-    if(is.null(newdata)){
-      error[i]  <- RMSEP(pls, estimate = "CV")$val[1,1, opt.comp + 1]
+    if(is.null(newX) || is.null(newy)){
+      if (modeltype == "prediction"){
+        error[i]  <- RMSEP(pls, estimate = "CV")$val[1,1, opt.comp + 1]
+      } else if (modeltype == "classification"){
+        error[i] <- sum(classes[,opt.comp] != y.orig)/n
+      }
     } else {
-      val <- newdata; val$X <- val$X[,left.vec, drop = FALSE]
-      error[i]  <- RMSEP(pls, estimate = "test", newdata = val)$val[1,1, opt.comp + 1]
+      if (modeltype == "prediction"){
+        val <- data.frame(X=I(newX[,left.vec, drop = FALSE]), y=newy)
+        error[i]  <- RMSEP(pls, estimate = "test", newdata = val)$val[1,1, opt.comp + 1]
+      } else if (modeltype == "classification"){
+        yv.orig <- as.numeric(newy)
+        yv      <- model.matrix(~ newy-1)
+        val <- data.frame(X=I(newX[,left.vec, drop = FALSE]), y=newy)
+        error[i] <- sum(lda_from_pls(pls, yv.orig, val$X, opt.comp)[,opt.comp] != yv.orig)/length(yv.orig)
+      }
     }
     
     if(method == "SR"){
@@ -195,4 +221,49 @@ print.shaved <- function(x, ...){
   cat('Minimum error = ', (x$min.err), ', achieved after ', x$min.red,
       ' out of ', length(x$error)-1, ' reductions using ',
       x$nvar[which.min(x$error)], ' variables.', sep = "")
+}
+
+
+## PLS-DA + LDA
+lda_from_pls <- function(model, grouping, newdata, ncomp){
+  # Extract and predict scores
+  scoresCal <- scores(model)
+  scoresVal <- predict(model, newdata = newdata, type = "scores")
+
+  # Prepare for storage
+  N <- dim(scoresVal)
+  class <- matrix(0, N[1],ncomp)
+  
+  # Create ncomp lda models and predict classes
+  for(i in 1:ncomp){
+    ldai <- lda(scoresCal[, 1:i, drop = FALSE], grouping)
+    class[, i] <- predict(ldai, scoresVal[, 1:i, drop = FALSE])$class
+  }
+  colnames(class) <- paste("Comp.", 1:ncomp, sep="")
+  class
+}
+
+# Cross-validate PLS-DA + LDA (dirty code)
+lda_from_pls_cv <- function(model, X, y, ncomp){
+  N <- dim(model$scores)
+  ncomp <- min(min(min(ncomp, N[2]),dim(X)[2]),dim(y)[2])
+  classes  <- matrix(0, N[1], ncomp)
+  dummy    <- model.matrix(~ factor(y)-1)
+  segments <- model$validation$segments # Extract segments
+  data     <- data.frame(X = I(X), y = y, dummy = I(dummy))
+  for(i in 1:length(segments)){
+    # Update model with new data
+    model_i <- update(model, subset = NULL, 
+                      formula = dummy~X, 
+                      data = data[-segments[[i]],,drop=FALSE], 
+                      validation = "none")
+    
+    # Predict left out
+    comp <- 1
+    if(!is.null(compp <- dim(scores(model_i))[2]))
+      comp <- min(compp,ncomp)
+    classes[segments[[i]],1:comp] <- lda_from_pls(model_i, y[-segments[[i]]], data[segments[[i]],, drop = FALSE], comp)
+  }
+  colnames(classes) <- paste("Comp.", 1:ncomp, sep="")
+  classes
 }

@@ -4,14 +4,14 @@
 \alias{ga_pls}
 \title{Genetic algorithm combined with PLS regression (GA-PLS)}
 \usage{
-ga_pls(y, X, GA.threshold = 0.5, iters = 5, popSize = 100)
+ga_pls(y, X, GA.threshold = 10, iters = 5, popSize = 100)
 }
 \arguments{
 \item{y}{vector of response values (\code{numeric} or \code{factor}).}
 
 \item{X}{numeric predictor \code{matrix}.}
 
-\item{GA.threshold}{the change for a zero for mutations and initialization (default = 0.5).}
+\item{GA.threshold}{the change for a zero for mutations and initialization (default = 10).}
 
 \item{iters}{the number of iterations (default = 5).}
 
@@ -44,7 +44,7 @@ evolution theory and natural selection.
 }
 \examples{
 data(gasoline, package = "pls")
-# with( gasoline, ga_pls(octane, NIR) ) # Time consuming
+# with( gasoline, ga_pls(octane, NIR, GA.threshold = 10) ) # Time-consuming
 
 }
 \author{

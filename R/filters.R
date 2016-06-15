@@ -62,21 +62,6 @@ SR <- function(pls.object, opt.comp, X){
   # Selectivity ratio
   X   <- as.matrix(X)
   RC  <- pls.object$coefficients[,1,opt.comp]
-  Wtp <- RC/norm(matrix(RC))
-  Ttp <- X%*%Wtp
-  Ptp <- (t(X)%*%Ttp)/c((t(Ttp)%*%Ttp))
-  
-  Xtp <- Ttp%*%t(Ptp)
-  Xr  <- X-Xtp
-  SR  <- colSums(Xtp*Xtp)/colSums(Xr*Xr)
-  #  var.test(Xtp, Xr)
-  SR
-}
-
-SR2 <- function(pls.object, opt.comp, X){
-  # Selectivity ratio
-  X   <- as.matrix(X)
-  RC  <- pls.object$coefficients[,1,opt.comp]
   Wtp <- RC/sqrt(crossprod(RC))
   Ttp <- X %*% Wtp
   Ptp <- crossprod(X, Ttp)/crossprod(Ttp)[1]
@@ -195,7 +180,9 @@ simplify <- function(X){
 #' 
 #' @import pls
 #' @export
-filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), validation = "LOO", LW.threshold = NULL, RC.threshold = NULL, JT.threshold = NULL, VIP.threshold = NULL, SR.threshold = NULL, sMC.threshold = NULL,...){
+filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), validation = "LOO", 
+                       LW.threshold = NULL, RC.threshold = NULL, JT.threshold = NULL,
+                       VIP.threshold = NULL, SR.threshold = NULL, sMC.threshold = NULL,...){
   
   n <- dim(X)[1]
   p <- dim(X)[2]
@@ -369,3 +356,19 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
   
   selections
 }
+
+# Previous version
+# SR <- function(pls.object, opt.comp, X){
+#   # Selectivity ratio
+#   X   <- as.matrix(X)
+#   RC  <- pls.object$coefficients[,1,opt.comp]
+#   Wtp <- RC/norm(matrix(RC))
+#   Ttp <- X%*%Wtp
+#   Ptp <- (t(X)%*%Ttp)/c((t(Ttp)%*%Ttp))
+#   
+#   Xtp <- Ttp%*%t(Ptp)
+#   Xr  <- X-Xtp
+#   SR  <- colSums(Xtp*Xtp)/colSums(Xr*Xr)
+#   #  var.test(Xtp, Xr)
+#   SR
+# }

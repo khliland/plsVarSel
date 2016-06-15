@@ -24,7 +24,16 @@ methods for multivariate regression.
 }
 \details{
 Loading weights are truncated around their median based on confidence intervals
-for modelling without replicates (Lenth et al.).
+for modelling without replicates (Lenth et al.). The arguments passed to \code{mvrV} include
+all possible arguments to \code{\link[pls]{cppls}} and the following truncation parameters 
+(with defaults) trunc.pow=FALSE, truncation=NULL, trunc.width=NULL, trunc.weight=0, 
+reorth=FALSE, symmetric=FALSE.
+
+The default way of performing truncation involves the following parameter values:
+truncation="Lenth", trunc.width=0.95, indicating Lenth's confidence intervals (assymmetric),
+with a confidence of 95%. trunc.weight can be set to a number between 0 and 1 to give a
+shrinkage instead of a hard threshold. An alternative truncation strategy can be used with:
+truncation="quantile", in which a quantile line is used for detecting outliers/inliers.
 }
 \examples{
 data(yarn, package = "pls")
