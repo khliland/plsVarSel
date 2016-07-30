@@ -34,10 +34,12 @@
 #'  in QSAR studies: GA-based PLS analysis of calcium channel antagonists, Journal of Chemical
 #'  Information and Computer Sciences 37 (1997) 306-310.
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
-#'
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
+#' 
 #' @examples
 #' data(gasoline, package = "pls")
 #' # with( gasoline, ga_pls(octane, NIR, GA.threshold = 10) ) # Time-consuming
@@ -48,6 +50,9 @@ ga_pls<- function(y,X, GA.threshold=10, iters=5, popSize=100){
   evalFunc <- evaluateX
   monitorFunc <- monitor
   n <- ncol(X)
+  if(is.factor(y)){
+    y <- model.matrix(~y-1,data.frame(y=y))
+  }
   putPLSVarSelEnv("X", X)
   putPLSVarSelEnv("y", y)
   gapls.results <- rbga.bin(size=n, zeroToOneRatio=GA.threshold, evalFunc=evalFunc, monitorFunc=monitorFunc, popSize=popSize, iters=iters)

@@ -37,10 +37,12 @@
 #' @author Kristian Hovde Liland
 #'
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
-#' 
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
+#'  
 #' @examples
 #' data(mayonnaise, package = "pls")
 #' sh <- shaving(mayonnaise$design[,1], pls::msc(mayonnaise$NIR), type = "interleaved")
@@ -61,7 +63,7 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
     modeltype <- "classification"
     y.orig <- as.numeric(y)
     y      <- model.matrix(~ y-1)
-    tb<-as.numeric(names(table(y)))
+    tb     <- as.numeric(names(table(y)))
     min.left <- max(min.left, dim(y)[2])
   }
 
@@ -223,47 +225,3 @@ print.shaved <- function(x, ...){
       x$nvar[which.min(x$error)], ' variables.', sep = "")
 }
 
-
-## PLS-DA + LDA
-lda_from_pls <- function(model, grouping, newdata, ncomp){
-  # Extract and predict scores
-  scoresCal <- scores(model)
-  scoresVal <- predict(model, newdata = newdata, type = "scores")
-
-  # Prepare for storage
-  N <- dim(scoresVal)
-  class <- matrix(0, N[1],ncomp)
-  
-  # Create ncomp lda models and predict classes
-  for(i in 1:ncomp){
-    ldai <- lda(scoresCal[, 1:i, drop = FALSE], grouping)
-    class[, i] <- predict(ldai, scoresVal[, 1:i, drop = FALSE])$class
-  }
-  colnames(class) <- paste("Comp.", 1:ncomp, sep="")
-  class
-}
-
-# Cross-validate PLS-DA + LDA (dirty code)
-lda_from_pls_cv <- function(model, X, y, ncomp){
-  N <- dim(model$scores)
-  ncomp <- min(min(min(ncomp, N[2]),dim(X)[2]),dim(y)[2])
-  classes  <- matrix(0, N[1], ncomp)
-  dummy    <- model.matrix(~ factor(y)-1)
-  segments <- model$validation$segments # Extract segments
-  data     <- data.frame(X = I(X), y = y, dummy = I(dummy))
-  for(i in 1:length(segments)){
-    # Update model with new data
-    model_i <- update(model, subset = NULL, 
-                      formula = dummy~X, 
-                      data = data[-segments[[i]],,drop=FALSE], 
-                      validation = "none")
-    
-    # Predict left out
-    comp <- 1
-    if(!is.null(compp <- dim(scores(model_i))[2]))
-      comp <- min(compp,ncomp)
-    classes[segments[[i]],1:comp] <- lda_from_pls(model_i, y[-segments[[i]]], data[segments[[i]],, drop = FALSE], comp)
-  }
-  colnames(classes) <- paste("Comp.", 1:ncomp, sep="")
-  classes
-}

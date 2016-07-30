@@ -23,10 +23,12 @@
 #' least squares based algorithm for parsimonious variable selection, Algorithms for
 #' Molecular Biology 6 (2011).
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
-#'
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
+#' 
 #' @examples
 #' data(gasoline, package = "pls")
 #' \dontrun{
@@ -39,7 +41,12 @@ rep_pls <- function( y, X, ncomp=5, ratio=0.75, VIP.threshold= 0.5, N=3  ){
   modeltype <- "prediction"
   if (is.factor(y)) {
     modeltype <- "classification"
-    tb<-as.numeric(names(table(y)))
+    y.orig <- as.numeric(y)
+    y      <- model.matrix(~ y-1)
+    tb     <- names(table(y.orig))
+    # tb<-as.numeric(names(table(y)))
+  } else {
+    y <- as.matrix(y)
   }
   
   # Local variables
@@ -60,27 +67,36 @@ rep_pls <- function( y, X, ncomp=5, ratio=0.75, VIP.threshold= 0.5, N=3  ){
       K    <- floor(n1*ratio)
       temp <- sample(n1)
       calk <- temp[1:K]      
-      Zcal <- Z[calk, ];  ycal  <- y[calk]  
-      Ztest<- Z[-calk, ]; ytest <- y[-calk] 
+      Zcal <- Z[calk, ];  ycal  <- y[calk,]  
+      Ztest<- Z[-calk, ]; ytest <- y[-calk,] 
     } else 
       if(modeltype == "classification"){
         calK <- c() 
         for(jj in 1:length(tb)){
-          temp <- sample(which(y==tb[jj]))
+          temp <- sample(which(y.orig==tb[jj]))
           K    <- floor(length(temp)*ratio)
           calK <- c(calK, temp[1:K])
         }      
-        Zcal  <- Z[calK, ];  ycal  <- y[calK]  
-        Ztest <- Z[-calK, ]; ytest <- y[-calK] 
+        Zcal  <- Z[calK, ];  ycal  <- y[calK,]  
+        Ztest <- Z[-calK, ]; ytest <- y[-calK,] 
       }
     iter <- 0
     while( !terminated ){  
       # Fitting, and finding optimal number of components
-      pls.object <- plsr(ycal ~ Zcal,  ncomp=min(ncomp, (ncol(Zcal)-1)), validation = "LOO")
-      Press    <- pls.object$valid$PRESS[1,]
-      opt.comp <- which.min(Press)
-      
-      mydata  <- data.frame( yy=c(ycal, ytest), ZZ=I(rbind(Zcal, Ztest)) , train= c(rep(TRUE, length(ycal)), rep(FALSE, length(ytest))))
+      co <- min(ncomp, ncol(Zcal)-1)
+      pls.object <- plsr(y ~ X,  ncomp=co, data = data.frame(y=I(ycal), X=I(Zcal)), validation = "LOO")
+      if (modeltype == "prediction"){
+        opt.comp <- which.min(pls.object$validation$PRESS[1,])
+      } else if (modeltype == "classification"){
+        classes <- lda_from_pls_cv(pls.object, Zcal, y.orig[calK], co)
+        opt.comp <- which.max(colSums(classes==y.orig[calK]))
+      }
+
+      if(modeltype == "prediction"){
+        mydata  <- data.frame( yy=c(ycal, ytest) ,ZZ=I(rbind(Zcal, Ztest)) , train= c(rep(TRUE, length(ycal)), rep(FALSE, length(ytest))))
+      } else {
+        mydata  <- data.frame( yy=I(rbind(ycal, ytest)) ,ZZ=I(rbind(Zcal, Ztest)) , train= c(rep(TRUE, length(y.orig[calK])), rep(FALSE, length(y.orig[-calK]))))
+      }
       pls.fit <- plsr(yy ~ ZZ, ncomp=opt.comp, data=mydata[mydata$train,])
       # Make predictions using the established PLS model 
       if (modeltype == "prediction"){
@@ -88,10 +104,9 @@ rep_pls <- function( y, X, ncomp=5, ratio=0.75, VIP.threshold= 0.5, N=3  ){
         Pgi <- sqrt(sum((ytest-pred.pls[,,])^2))
         predy.list <- c(predy.list, list(pred.pls[,,]))
       } else if(modeltype == "classification"){
-        may.lda   <- lda(y ~ X.score, data = data.frame( y = ycal, X.score = I(pls.fit$scores )))
-        score.val <- (Ztest - rep(colMeans(Zcal),each = nrow(Ztest))) %*% pls.fit$projection 
-        Pgi       <- 100-sum(ytest == predict(may.lda, dimen = opt.comp, newdata = data.frame(X.score = I(score.val)))$class)/nrow(Ztest)*100
-        predy.list<- c(predy.list, list(predict(may.lda, dimen = opt.comp, newdata = data.frame(X.score = I(score.val)))$class))
+        classes <- lda_from_pls(pls.fit,y.orig[calK],Ztest,opt.comp)[,opt.comp]
+        Pgi       <- 100-sum(y.orig[-calK] == classes)/nrow(Ztest)*100
+        predy.list<- c(predy.list, list(classes))
       }
       
       Pg  <- c( Pg, Pgi )

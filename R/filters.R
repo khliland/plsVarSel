@@ -26,9 +26,11 @@
 #' methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 #' 118 (2012) 62-69.
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 #'
 #' @examples
 #' data(gasoline, package = "pls")
@@ -186,6 +188,16 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
   
   n <- dim(X)[1]
   p <- dim(X)[2]
+
+  modeltype <- "prediction"
+  if (is.factor(y)) {
+    modeltype <- "classification"
+    y.orig <- as.numeric(y)
+    y      <- model.matrix(~ y-1)
+    tb     <- as.numeric(names(table(y)))
+  }
+  
+  ncomp.opt <- ncomp.opt[1]
   
   # Primary PLSR fitting
   if(!is.null(JT.threshold)){
@@ -193,9 +205,13 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
   } else {
     pls.object <- plsr(y ~ X, ncomp = ncomp, validation = validation, ...)
   }
-  Press <- pls.object$valid$PRESS[1,]
-  opt.comp <- which.min(Press)
-  
+  if (modeltype == "prediction"){
+    opt.comp <- which.min(pls.object$validation$PRESS[1,])
+  } else if (modeltype == "classification"){
+    classes <- lda_from_pls_cv(pls.object, X, y.orig, ncomp)
+    opt.comp <- which.max(colSums(classes==y.orig))
+  }
+
   # Apply filter methods
   selections <- list()
   if(!is.null(LW.threshold)){
@@ -217,9 +233,17 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
         if(length(selections$LW[[i+2]]) < ncomp)
           selections$LW[[i+2]] <- simplify(order(LWvalues, decreasing = TRUE)[1:ncomp])
         pls.this <- plsr(y ~ X[,selections$LW[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
-        comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
-        selections$LW$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
-        selections$LW$comps[i]  <- comp
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$LW$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$LW$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$LW[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$LW$RMSECV[i] <- err[comp]/n
+          selections$LW$comps[i]  <- comp
+        }
       }
     }
   }
@@ -243,9 +267,17 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
         if(length(selections$RC[[i+2]]) < ncomp)
           selections$RC[[i+2]] <- simplify(order(LWvalues, decreasing = TRUE)[1:ncomp])
         pls.this <- plsr(y ~ X[,selections$RC[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
-        comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
-        selections$RC$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
-        selections$RC$comps[i]  <- comp
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$RC$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$RC$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$RC[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$RC$RMSECV[i] <- err[comp]/n
+          selections$RC$comps[i]  <- comp
+        }
       }
     }
   }
@@ -269,9 +301,17 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
         if(length(selections$VIP[[i+2]]) < ncomp)
           selections$VIP[[i+2]] <- simplify(order(VIPvalues, decreasing = TRUE)[1:ncomp])
         pls.this <- plsr(y ~ X[,selections$VIP[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
-        comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
-        selections$VIP$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
-        selections$VIP$comps[i]  <- comp
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$VIP$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$VIP$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$VIP[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$VIP$RMSECV[i] <- err[comp]/n
+          selections$VIP$comps[i]  <- comp
+        }
       }
     }
   }
@@ -293,11 +333,19 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       for(i in 1:length(SR.threshold)){
         selections$SR[[i+2]] <- simplify(which(SRvalues > SR.threshold[i]))
         if(length(selections$SR[[i+2]]) < ncomp)
-          selections$SR[[i+2]] <- simplify(order(LWvalues, decreasing = TRUE)[1:ncomp])
+          selections$SR[[i+2]] <- simplify(order(SRvalues, decreasing = TRUE)[1:ncomp])
         pls.this <- plsr(y ~ X[,selections$SR[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
-        comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
-        selections$SR$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
-        selections$SR$comps[i]  <- comp
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$SR$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$SR$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$SR[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$SR$RMSECV[i] <- err[comp]/n
+          selections$SR$comps[i]  <- comp
+        }
       }
     }
   }
@@ -319,11 +367,19 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       for(i in 1:length(sMC.threshold)){
         selections$sMC[[i+2]] <- simplify(which(sMCvalues > sMC.threshold[i]))
         if(length(selections$sMC[[i+2]]) < ncomp)
-          selections$sMC[[i+2]] <- simplify(order(LWvalues, decreasing = TRUE)[1:ncomp])
+          selections$sMC[[i+2]] <- simplify(order(sMCvalues, decreasing = TRUE)[1:ncomp])
         pls.this <- plsr(y ~ X[,selections$sMC[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
-        comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
-        selections$sMC$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
-        selections$sMC$comps[i]  <- comp
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$sMC$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$sMC$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$sMC[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$sMC$RMSECV[i] <- err[comp]/n
+          selections$sMC$comps[i]  <- comp
+        }
       }
     }
   }
@@ -345,11 +401,19 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       for(i in 1:length(JT.threshold)){
         selections$JT[[i+2]] <- simplify(which(JTvalues > JT.threshold[i]))
         if(length(selections$JT[[i+2]]) < ncomp)
-          selections$JT[[i+2]] <- simplify(order(LWvalues, decreasing = TRUE)[1:ncomp])
+          selections$JT[[i+2]] <- simplify(order(JTvalues, decreasing = TRUE)[1:ncomp])
         pls.this <- plsr(y ~ X[,selections$JT[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
-        comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
-        selections$JT$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
-        selections$JT$comps[i]  <- comp
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$JT$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$JT$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$JT[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$JT$RMSECV[i] <- err[comp]/n
+          selections$JT$comps[i]  <- comp
+        }
       }
     }
   }

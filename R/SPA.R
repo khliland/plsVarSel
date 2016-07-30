@@ -20,10 +20,12 @@
 #' informative metabolites based on model population analysis, Metabolomics 6 (2010) 353-361.
 #' http://code.google.com/p/spa2010/downloads/list.
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
-#'
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
+#' 
 #' @examples
 #' data(gasoline, package = "pls")
 #' with( gasoline, spa_pls(octane, NIR) )
@@ -50,7 +52,12 @@ spa_pls<- function(y, X, ncomp=10, N=3, ratio=0.8, Qv=10, SPA.threshold=0.05){
   modeltype <- "prediction"
   if (is.factor(y)) {
     modeltype <- "classification"
-    tb<-as.numeric(names(table(y)))
+    y.orig <- as.numeric(y)
+    y      <- model.matrix(~ y-1)
+    tb     <- names(table(y.orig))
+    # tb<-as.numeric(names(table(y)))
+  } else {
+    y <- as.matrix(y)
   }
   
   Mx <- dim(X)[1]
@@ -70,14 +77,23 @@ spa_pls<- function(y, X, ncomp=10, N=3, ratio=0.8, Qv=10, SPA.threshold=0.05){
     variableIndex <- matrix(0,1,Nx)
     variableIndex[nv] <- 1   
     
-    Xcal  <- X[calk,nv];  ycal  <- y[calk]
-    Xtest <- X[testk,nv]; ytest <- y[testk]    
+    Xcal  <- X[calk,nv];  ycal  <- y[calk,]
+    Xtest <- X[testk,nv]; ytest <- y[testk,]    
     
     pls.object <- plsr(ycal ~ Xcal, ncomp=min(ncomp, (ncol(Xcal)-1)), validation = "LOO")
-    Press    <- pls.object$valid$PRESS[1,]
-    opt.comp <- which.min(Press)
-    yy <- c(ycal, ytest); XX <- rbind( Xcal, Xtest)
-    mydata  <- data.frame( yy=yy ,XX=I(XX) , train=c(rep(TRUE, length(ycal)), rep(FALSE, length(ytest))))
+    if (modeltype == "prediction"){
+      opt.comp <- which.min(pls.object$validation$PRESS[1,])
+    } else if (modeltype == "classification"){
+      classes <- lda_from_pls_cv(pls.object, Xcal, y.orig[calk], ncomp)
+      opt.comp <- which.max(colSums(classes==y.orig[calk]))
+    }
+    # yy <- c(ycal, ytest); XX <- rbind( Xcal, Xtest)
+    # mydata  <- data.frame( yy=yy ,XX=I(XX) , train=c(rep(TRUE, length(ycal)), rep(FALSE, length(ytest))))
+    if(modeltype == "prediction"){
+      mydata  <- data.frame( yy=c(ycal, ytest), XX=I(rbind(Xcal, Xtest)) , train=c(rep(TRUE, length(ycal)), rep(FALSE, length(ytest))))
+    } else {
+      mydata  <- data.frame( yy=I(rbind(ycal, ytest)), XX=I(rbind(Xcal, Xtest)) , train=c(rep(TRUE, length(y.orig[calk])), rep(FALSE, length(y.orig[testk]))))
+    }
     pls.fit <- plsr(yy ~ XX, ncomp=opt.comp, data=mydata[mydata$train,])
     
     # Make predictions using the established PLS model 
@@ -85,9 +101,8 @@ spa_pls<- function(y, X, ncomp=10, N=3, ratio=0.8, Qv=10, SPA.threshold=0.05){
       pred.pls  <- predict(pls.fit, ncomp = opt.comp, newdata=mydata[!mydata$train,])
       error0[i] <- sqrt(sum((ytest-pred.pls[,,])^2))
     } else if (modeltype == "classification"){
-      may.lda   <- lda(y ~ X.score, data = data.frame(y = ycal, X.score = I(pls.fit$scores )))
-      score.val <- (Xtest - rep(colMeans(Xcal),each = nrow(Xtest))) %*% pls.fit$projection 
-      error0[i] <- 100-sum(ytest == predict(may.lda, dimen = opt.comp, newdata = data.frame(X.score = I(score.val)))$class)/nrow(Xtest)*100
+      classes <- lda_from_pls(pls.fit,y.orig[calk],Xtest,opt.comp)[,opt.comp]
+      error0[i] <- 100-sum(y.orig[testk] == classes)/nrow(Xtest)*100
     }
     error_temp <- matrix(NA,1,Nx)
     
@@ -102,9 +117,8 @@ spa_pls<- function(y, X, ncomp=10, N=3, ratio=0.8, Qv=10, SPA.threshold=0.05){
         predr.pls <- predict(pls.fit, ncomp = 1:opt.comp, newdata=newdata)
         error_temp[nv[j]] <- sqrt(sum((ytest-predr.pls[,,])^2))
       } else if (modeltype == "classification"){
-        may.lda   <- lda(y ~ X.score, data = data.frame( y = ycal, X.score = I(pls.fit$scores )))
-        score.val <- (Xtestr - rep(colMeans(Xcal),each = nrow(Xtestr))) %*% pls.fit$projection 
-        error_temp[nv[j]] <- 100-sum(ytest == predict(may.lda, dimen = opt.comp, newdata = data.frame(X.score = I(score.val)))$class)/nrow(Xtestr)*100
+        classes <- lda_from_pls(pls.fit,y.orig[calk],Xtestr,opt.comp)[,opt.comp]
+        error_temp[nv[j]] <- 100-sum(y.orig[testk] == classes)/nrow(Xtest)*100
       }
     }
     error1[i,] <- error_temp

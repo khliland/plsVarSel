@@ -23,10 +23,12 @@
 #'  (IPW) PLS: a technique for the elimination of useless predictors in regression problems,
 #'  Journal of Chemometrics 13 (1999) 165-184.
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
-#'
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{setDA}}.
+#' 
 #' @examples
 #' data(gasoline, package = "pls")
 #' with( gasoline, ipw_pls(octane, NIR) )
@@ -37,6 +39,8 @@ ipw_pls <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.1){
   if(is.factor(y)) {
     modeltype <- "classification"
     tb <- as.numeric(names(table(y)))
+    y.orig <- y
+    y <- model.matrix(~y-1,data.frame(y=y))
   } else {
     modeltype <- "prediction"
     y <- scale(y)
@@ -44,10 +48,17 @@ ipw_pls <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.1){
   #X<- scale(X)
   for(i in 1:no.iter){
     pls.object <- plsr(y ~ X, ncomp=ncomp, validation = "CV")
-    Press    <- pls.object$valid$PRESS[1,]
-    opt.comp <- which.min(Press)
-    pls.fit  <- plsr(y ~ X, ncomp=opt.comp)
-    RC <- pls.fit$coef[,1,opt.comp]	
+    if (modeltype == "prediction"){
+      opt.comp <- which.min(pls.object$validation$PRESS[1,])
+    } else if (modeltype == "classification"){
+      classes <- lda_from_pls_cv(pls.object, X, y.orig, ncomp)
+      opt.comp <- which.max(colSums(classes==y.orig))
+    }
+    # Press    <- pls.object$valid$PRESS[1,]
+    # opt.comp <- which.min(Press)
+    # pls.fit  <- plsr(y ~ X, ncomp=opt.comp)
+    # RC <- pls.fit$coef[,1,opt.comp]	
+    RC <- pls.object$coef[,1,opt.comp]	
     SD <- apply(X, 2, sd)
     X  <- X*RC
   }

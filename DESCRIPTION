@@ -2,13 +2,13 @@ Encoding: UTF-8
 Package: plsVarSel
 Type: Package
 Title: Variable Selection in Partial Least Squares
-Version: 0.8
-Date: 2016-06-15
+Version: 0.9
+Date: 2016-07-27
 Author: Kristian Hovde Liland, Tahir Mehmood, Solve Sæbø
 Maintainer: Kristian Hovde Liland <kristian.liland@nmbu.no>
 Description: Interfaces and methods for variable selection in Partial Least
     Squares. The methods include filter methods, wrapper methods and embedded
-    methods.
+    methods. Both regression and classification is supported.
 License: GPL (>=2)
 Depends:
     pls

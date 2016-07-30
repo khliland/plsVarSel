@@ -45,8 +45,10 @@ I. Frank, Intermediate least squares regression method, Chemometrics and
 Intelligent Laboratory Systems 1 (3) (1987) 233-242.
 }
 \seealso{
-\code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-\code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-\code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
+\code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+\code{\link{stpls}}, \code{\link{truncation}},
+\code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+\code{\link{rep_pls}}, \code{\link{spa_pls}},
+\code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
 

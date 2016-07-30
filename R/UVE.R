@@ -22,10 +22,12 @@
 #' Elimination of uninformative variables for multivariate calibration, Analytical Chemistry 
 #' 68 (1996) 3851-3858.
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
-#'
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
+#' 
 #' @examples
 #' data(gasoline, package = "pls")
 #' with( gasoline, mcuve_pls(octane, NIR) )
@@ -39,6 +41,17 @@ mcuve_pls<- function(y,X,ncomp=10, N=3,ratio=0.75, MCUVE.threshold=NA){
   #            N: The number of Monte Carlo Simulation.
   #        ratio: The ratio of calibration samples to the total samples.
   
+  modeltype <- "prediction"
+  if (is.factor(y)) {
+    modeltype <- "classification"
+    y.orig <- as.numeric(y)
+    y      <- model.matrix(~ y-1)
+    tb     <- names(table(y.orig))
+    # tb<-as.numeric(names(table(y)))
+  } else {
+    y <- as.matrix(y)
+  }
+
   Mx <- nrow(X)
   Nx <- ncol(X)
   W  <- matrix(runif(Nx*Mx,0,1), Mx, Nx)
@@ -49,10 +62,14 @@ mcuve_pls<- function(y,X,ncomp=10, N=3,ratio=0.75, MCUVE.threshold=NA){
   for( i in 1:N){
     temp <- sample(Mx)
     calk <- temp[1:K]      
-    Zcal <- Z[calk, ]; ycal <- y[calk]  
+    Zcal <- Z[calk, ]; ycal <- y[calk,]  
     pls.object <- plsr(ycal ~ Zcal,  ncomp=min(ncomp, (ncol(Zcal)-1)), validation = "LOO")
-    Press      <- pls.object$valid$PRESS[1,]
-    opt.comp   <- which.min(Press)
+    if (modeltype == "prediction"){
+      opt.comp <- which.min(pls.object$validation$PRESS[1,])
+    } else if (modeltype == "classification"){
+      classes <- lda_from_pls_cv(pls.object, Zcal, y.orig[calk], ncomp)
+      opt.comp <- which.max(colSums(classes==y.orig[calk]))
+    }
     C[i,] <- pls.object$coefficients[,1,opt.comp]
   }
   U  <- apply(C, 2, mean)  

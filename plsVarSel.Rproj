@@ -16,5 +16,5 @@ BuildType: Package
 PackageUseDevtools: Yes
 PackagePath: H:/Documents/GitHub/plsVarSel
 PackageInstallArgs: --no-multiarch --with-keep.source
-PackageCheckArgs: --library=C:/R/Library
+PackageCheckArgs: --library=C:/R/Library --as-cran
 PackageRoxygenize: rd,collate,namespace

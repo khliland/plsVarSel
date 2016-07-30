@@ -20,10 +20,12 @@
 #' methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 #' 118 (2012) 62-69.
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{trunc}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
-#'
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
+#' 
 #' @examples
 #' str(simulate_classes(5,4,4))
 #' 
@@ -72,10 +74,12 @@ simulate_data <- function (dims, n1=150, n2=50){
 #' methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 #' 118 (2012) 62-69.
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
-#' \code{\link{stpls}}, \code{\link{trunc}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
-#'
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
+#' 
 #' @examples
 #' myImagePlot(matrix(1:12,3,4), 'A header')
 #' 
@@ -239,3 +243,41 @@ createSmatrix <- function(dims, rhos, xycors, xvar=1, yvar=1){
 
 
 
+# Prepare package internal namespace
+.plsEnv <- new.env(parent=emptyenv())
+plsEnv <- function() .plsEnv
+putplsEnv <- function(x, value) assign(x, value, envir=plsEnv())
+getplsEnv <- function(x, mode="any") get0(x, envir=plsEnv(), mode=mode, inherits=FALSE)
+putplsEnv("LQ","lda")
+
+#' Set chosen Discriminant Analysis
+#' 
+#' The default methods is LDA, but QDA and column of maximum prediction can be chosen.
+#'
+#' @param LQ character argument 'lda', 'qda', 'max' or NULL
+#'
+#' @return Returns the default set method.
+#'
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
+#' \code{\link{stpls}}, \code{\link{truncation}},
+#' \code{\link{bve_pls}}, \code{\link{ga_pls}}, \code{\link{ipw_pls}}, \code{\link{mcuve_pls}},
+#' \code{\link{rep_pls}}, \code{\link{spa_pls}},
+#' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
+#' 
+#' @examples
+#' \dontrun{
+#' setDA() # Query 'lda', 'qda' or 'max'
+#' setDA('qda') # Set default method to QDA
+#' }
+#' @export
+setDA <- function(LQ = NULL){
+  if(is.null(LQ)){
+    return( getplsEnv("LQ") )
+  } else {
+    if(!LQ %in% c("lda","qda","max")){
+      stop("Argument must be 'lda', 'qda' or 'max'")
+    }
+    putplsEnv("LQ", LQ)
+    return(LQ)
+  }
+}
