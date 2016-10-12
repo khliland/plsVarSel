@@ -7,8 +7,9 @@
 \title{Repeated shaving of variables}
 \usage{
 shaving(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC"),
-  prop = 0.2, min.left = 1, comp.type = c("CV", "max"),
-  validation = c("CV", 1), newy = NULL, newX = NULL, segments = 10, ...)
+  prop = 0.2, min.left = 2, comp.type = c("CV", "max"),
+  validation = c("CV", 1), fixed = integer(0), newy = NULL, newX = NULL,
+  segments = 10, plsType = "plsr", Y.add = NULL, ...)
 
 \method{plot}{shaved}(x, y, what = c("error", "spectra"), index = "min",
   log = "x", ...)
@@ -34,11 +35,18 @@ or fixed, \code{"max"}.}
 \item{validation}{type of validation for \code{plsr}. The default is "CV". If more
 than one set of CV segments is wanted, use a vector of lenth two, e.g. \code{c("CV",5)}.}
 
+\item{fixed}{vector of indeces for compulsory/fixed variables that should always be
+included in the modelling.}
+
 \item{newy}{validation response for RMSEP/error computations.}
 
 \item{newX}{validation predictors for RMSEP/error computations.}
 
 \item{segments}{see \code{mvr} for documentation of segment choices.}
+
+\item{plsType}{Type of PLS model, "plsr" or "cppls".}
+
+\item{Y.add}{Additional response for CPPLS, see \code{plsType}.}
 
 \item{...}{additional arguments for \code{plsr} or \code{cvsegments}.}
 

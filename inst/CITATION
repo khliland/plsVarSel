@@ -1,4 +1,4 @@
-citHeader("To cite the PLSVarSel package in publications use:")
+citHeader("To cite the plsVarSel package in publications use:")
 
 citEntry(entry = "Article",
   title        = "A review of variable selection methods in Partial Least Squares Regression",

@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: plsVarSel
 Type: Package
 Title: Variable Selection in Partial Least Squares
-Version: 0.9
-Date: 2016-07-27
+Version: 0.9.1
+Date: 2016-10-12
 Author: Kristian Hovde Liland, Tahir Mehmood, Solve Sæbø
 Maintainer: Kristian Hovde Liland <kristian.liland@nmbu.no>
 Description: Interfaces and methods for variable selection in Partial Least

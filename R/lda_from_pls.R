@@ -75,6 +75,7 @@ lda_from_pls <- function(model, grouping, newdata, ncomp){
 #' @param X predictors in the same format as in the \code{pls} model
 #' @param y vector of grouping labels
 #' @param ncomp maximum number of PLS components
+#' @param Y.add additional responses
 #'
 #' @return matrix of classifications
 #'
@@ -97,13 +98,18 @@ lda_from_pls <- function(model, grouping, newdata, ncomp){
 #' \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 #' 
 #' @export
-lda_from_pls_cv <- function(model, X, y, ncomp){
+lda_from_pls_cv <- function(model, X, y, ncomp, Y.add = NULL){
   N <- dim(model$scores)
   ncomp <- min(min(min(ncomp, N[2]),dim(X)[2]),dim(y)[2])
   classes  <- matrix(0, N[1], ncomp)
   dummy    <- model.matrix(~ factor(y)-1)
   segments <- model$validation$segments # Extract segments
-  data     <- data.frame(X = I(X), y = y, dummy = I(dummy))
+  if(is.null(Y.add)){
+    data     <- data.frame(X = I(X), y = y, dummy = I(dummy))
+  } else {
+    data     <- data.frame(X = I(X), y = y, dummy = I(dummy), Y.add=I(Y.add))
+    names(data)[4] <- deparse(substitute(Y.add))
+  }
   for(i in 1:length(segments)){
     # Update model with new data
     model_i <- update(model, subset = NULL, 

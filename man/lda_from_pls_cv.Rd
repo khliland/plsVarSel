@@ -4,7 +4,7 @@
 \alias{lda_from_pls_cv}
 \title{Cross-validated LDA/QDA classification from PLS model}
 \usage{
-lda_from_pls_cv(model, X, y, ncomp)
+lda_from_pls_cv(model, X, y, ncomp, Y.add = NULL)
 }
 \arguments{
 \item{model}{\code{pls} model fitted with the \code{pls} package}
@@ -14,6 +14,8 @@ lda_from_pls_cv(model, X, y, ncomp)
 \item{y}{vector of grouping labels}
 
 \item{ncomp}{maximum number of PLS components}
+
+\item{Y.add}{additional responses}
 }
 \value{
 matrix of classifications
