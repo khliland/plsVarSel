@@ -57,9 +57,6 @@ with( gasoline, filterPLSR(octane, NIR, ncomp = 10, "minimum", validation = "LOO
 }
 
 }
-\author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
-}
 \references{
 T. Mehmood, K.H. Liland, L. Snipen, S. Sæbø, A review of variable selection 
 methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
@@ -70,4 +67,6 @@ methods in Partial Least Squares Regression, Chemometrics and Intelligent Labora
 \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
 \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
 }
-
+\author{
+Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+}

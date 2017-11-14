@@ -39,4 +39,3 @@ with(mayonnaise, {
 \code{\link{rep_pls}}, \code{\link{spa_pls}},
 \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
-

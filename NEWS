@@ -1,0 +1,8 @@
+NEWS file for package plsVarSel
+Interfaces and methods for variable selection in Partial Least Squares.
+Kristian Hovde Liland, Tahir Mehmood, and Solve Sæbø, Norway
+
+##### Version 0.9.2
+Date: 09 November 2017
+>> Corrected a grave error in the VIP method.
+>> Fixed issues concerning new testing routines with CRAN.

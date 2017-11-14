@@ -37,9 +37,6 @@ data(gasoline, package = "pls")
 with( gasoline, bve_pls(octane, NIR) )
 
 }
-\author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
-}
 \references{
 I. Frank, Intermediate least squares regression method, Chemometrics and
 Intelligent Laboratory Systems 1 (3) (1987) 233-242.
@@ -51,4 +48,6 @@ Intelligent Laboratory Systems 1 (3) (1987) 233-242.
 \code{\link{rep_pls}}, \code{\link{spa_pls}},
 \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
-
+\author{
+Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+}

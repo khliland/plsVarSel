@@ -11,7 +11,7 @@ ga_pls(y, X, GA.threshold = 10, iters = 5, popSize = 100)
 
 \item{X}{numeric predictor \code{matrix}.}
 
-\item{GA.threshold}{the change for a zero for mutations and initialization (default = 10).}
+\item{GA.threshold}{the change for a zero for mutations and initialization (default = 10). (The ratio of non-selected variables for each chromosome.)}
 
 \item{iters}{the number of iterations (default = 5).}
 
@@ -47,9 +47,6 @@ data(gasoline, package = "pls")
 # with( gasoline, ga_pls(octane, NIR, GA.threshold = 10) ) # Time-consuming
 
 }
-\author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
-}
 \references{
 K. Hasegawa, Y. Miyashita, K. Funatsu, GA strategy for variable selection
  in QSAR studies: GA-based PLS analysis of calcium channel antagonists, Journal of Chemical
@@ -62,4 +59,6 @@ K. Hasegawa, Y. Miyashita, K. Funatsu, GA strategy for variable selection
 \code{\link{rep_pls}}, \code{\link{spa_pls}},
 \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
-
+\author{
+Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+}

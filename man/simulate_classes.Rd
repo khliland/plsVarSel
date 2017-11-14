@@ -34,9 +34,6 @@ with continuous response data.
 str(simulate_classes(5,4,4))
 
 }
-\author{
-Tahir Mehmood, Kristian Hovde Liland, Solve S?b?.
-}
 \references{
 T. Mehmood, K.H. Liland, L. Snipen, S. S?b?, A review of variable selection 
 methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
@@ -49,4 +46,6 @@ methods in Partial Least Squares Regression, Chemometrics and Intelligent Labora
 \code{\link{rep_pls}}, \code{\link{spa_pls}},
 \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
-
+\author{
+Tahir Mehmood, Kristian Hovde Liland, Solve S?b?.
+}

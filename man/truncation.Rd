@@ -42,9 +42,6 @@ tr <- truncation(density ~ NIR, ncomp=5, data=yarn, validation="CV",
 summary(tr)
 
 }
-\author{
-Kristian Hovde Liland.
-}
 \references{
 K.H. Liland, M. Høy, H. Martens, S. Sæbø: Distribution based truncation for 
 variable selection in subspace methods for multivariate regression, Chemometrics and
@@ -57,4 +54,6 @@ Intelligent Laboratory Systems 122 (2013) 103-111.
 \code{\link{rep_pls}}, \code{\link{spa_pls}},
 \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
-
+\author{
+Kristian Hovde Liland.
+}

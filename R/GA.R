@@ -5,7 +5,7 @@
 #'
 #' @param y vector of response values (\code{numeric} or \code{factor}).
 #' @param X numeric predictor \code{matrix}.
-#' @param GA.threshold the change for a zero for mutations and initialization (default = 10).
+#' @param GA.threshold the change for a zero for mutations and initialization (default = 10). (The ratio of non-selected variables for each chromosome.)
 #' @param iters the number of iterations (default = 5).
 #' @param popSize the population size (default = 100).
 #'

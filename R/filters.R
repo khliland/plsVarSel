@@ -46,17 +46,18 @@
 #' matplot(scale(cbind(vip, sr, smc, lw, rc)), type = 'l')
 #'
 #' @export
-VIP <- function(pls.object, opt.comp, p = dim(pls.object$coef)[1]){
+VIP <- function (pls.object, opt.comp, p = dim(pls.object$coef)[1]) {
   # Variable importance in prediction
-  W  <- pls.object$loading.weights
-  Q  <- pls.object$Yloadings
+  W <- pls.object$loading.weights
+  Q <- pls.object$Yloadings
   TT <- pls.object$scores
-  Q2 <- as.numeric(Q)* as.numeric(Q)
-  WW <- W*W/apply(W,2, function(x) sum(x*x))
-  
-  VIP <- sqrt(p*apply(as.matrix(Q2[1:opt.comp]*diag(crossprod(TT))[1:opt.comp]*WW[,1:opt.comp]),1,sum)/sum(Q2[1:opt.comp]*diag(crossprod(TT))[1:opt.comp]))
+  Q2 <- as.numeric(Q) * as.numeric(Q)
+  Q2TT <- Q2[1:opt.comp] * diag(crossprod(TT))[1:opt.comp]
+  WW <- W * W/apply(W, 2, function(x) sum(x * x))
+  VIP <- sqrt(p * apply(sweep(WW[, 1:opt.comp, drop=FALSE],2,Q2TT,"*"), 1, sum)/sum(Q2TT))
   VIP
 }
+
 
 #' @rdname VIP
 #' @export
@@ -64,9 +65,9 @@ SR <- function(pls.object, opt.comp, X){
   # Selectivity ratio
   X   <- as.matrix(X)
   RC  <- pls.object$coefficients[,1,opt.comp]
-  Wtp <- RC/sqrt(crossprod(RC))
+  Wtp <- RC/c(sqrt(crossprod(RC))[1])
   Ttp <- X %*% Wtp
-  Ptp <- crossprod(X, Ttp)/crossprod(Ttp)[1]
+  Ptp <- crossprod(X, Ttp)/c(crossprod(Ttp)[1])
   
   Xtp <- tcrossprod(Ttp, Ptp)
   Xr  <- X - Xtp

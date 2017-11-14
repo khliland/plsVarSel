@@ -36,9 +36,6 @@ data(gasoline, package = "pls")
 with( gasoline, ipw_pls(octane, NIR) )
 
 }
-\author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
-}
 \references{
 M. Forina, C. Casolino, C. Pizarro Millan, Iterative predictor weighting
  (IPW) PLS: a technique for the elimination of useless predictors in regression problems,
@@ -51,4 +48,6 @@ M. Forina, C. Casolino, C. Pizarro Millan, Iterative predictor weighting
 \code{\link{rep_pls}}, \code{\link{spa_pls}},
 \code{\link{lda_from_pls}}, \code{\link{setDA}}.
 }
-
+\author{
+Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+}

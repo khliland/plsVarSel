@@ -24,4 +24,3 @@ Adaptation of \code{summary.mvr} from the \code{pls} package v 2.4.3.
 \seealso{
 \code{\link[pls]{summary.mvr}}
 }
-

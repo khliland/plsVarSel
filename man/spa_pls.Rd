@@ -35,9 +35,6 @@ data(gasoline, package = "pls")
 with( gasoline, spa_pls(octane, NIR) )
 
 }
-\author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
-}
 \references{
 H. Li, M. Zeng, B. Tan, Y. Liang, Q. Xu, D. Cao, Recipe for revealing 
 informative metabolites based on model population analysis, Metabolomics 6 (2010) 353-361.
@@ -50,4 +47,6 @@ http://code.google.com/p/spa2010/downloads/list.
 \code{\link{rep_pls}}, \code{\link{spa_pls}},
 \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
-
+\author{
+Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+}

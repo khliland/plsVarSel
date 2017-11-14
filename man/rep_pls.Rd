@@ -39,9 +39,6 @@ with( gasoline, rep_pls(octane, NIR) )
 }
 
 }
-\author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
-}
 \references{
 T. Mehmood, H. Martens, S. Sæbø, J. Warringer, L. Snipen, A partial 
 least squares based algorithm for parsimonious variable selection, Algorithms for
@@ -54,4 +51,6 @@ Molecular Biology 6 (2011).
 \code{\link{rep_pls}}, \code{\link{spa_pls}},
 \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
-
+\author{
+Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+}

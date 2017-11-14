@@ -44,4 +44,3 @@ Adaptation of \code{mvr} from package \code{pls} v 2.4.3.
 \seealso{
 \code{\link[pls]{mvr}}
 }
-
