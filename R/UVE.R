@@ -52,6 +52,9 @@ mcuve_pls<- function(y,X,ncomp=10, N=3,ratio=0.75, MCUVE.threshold=NA){
     y <- as.matrix(y)
   }
 
+  # Strip X
+  X <- unclass(as.matrix(X))
+
   Mx <- nrow(X)
   Nx <- ncol(X)
   W  <- matrix(runif(Nx*Mx,0,1), Mx, Nx)

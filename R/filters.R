@@ -63,7 +63,7 @@ VIP <- function (pls.object, opt.comp, p = dim(pls.object$coef)[1]) {
 #' @export
 SR <- function(pls.object, opt.comp, X){
   # Selectivity ratio
-  X   <- as.matrix(X)
+  X   <- unclass(as.matrix(X))
   RC  <- pls.object$coefficients[,1,opt.comp]
   Wtp <- RC/c(sqrt(crossprod(RC))[1])
   Ttp <- X %*% Wtp
@@ -93,7 +93,7 @@ sMC <- function(pls.object, opt.comp, X, alpha_mc = 0.05){
   # DOI: http://dx.doi.org/10.1016/j.chemolab.2014.08.005
   
   b  <- pls.object$coefficients[,1,opt.comp]
-  X   <- as.matrix(X)
+  X   <- unclass(as.matrix(X))
   
   n <- dim(X)[1]
   
@@ -186,6 +186,9 @@ simplify <- function(X){
 filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), validation = "LOO", 
                        LW.threshold = NULL, RC.threshold = NULL, JT.threshold = NULL,
                        VIP.threshold = NULL, SR.threshold = NULL, sMC.threshold = NULL,...){
+  
+  # Strip X
+  X <- unclass(as.matrix(X))
   
   n <- dim(X)[1]
   p <- dim(X)[2]

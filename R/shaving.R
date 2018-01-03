@@ -71,6 +71,9 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
     min.left <- max(min.left, dim(y)[2])
   }
 
+  # Strip X
+  X <- unclass(as.matrix(X))
+  
   # Initialization
   n <- nrow(X)
   p <- ncol(X)

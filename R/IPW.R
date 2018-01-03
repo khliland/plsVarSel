@@ -36,6 +36,9 @@
 #' @export
 ipw_pls <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.1){
   
+  # Strip X
+  X <- unclass(as.matrix(X))
+
   if(is.factor(y)) {
     modeltype <- "classification"
     tb <- as.numeric(names(table(y)))

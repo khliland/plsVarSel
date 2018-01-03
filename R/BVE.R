@@ -46,6 +46,9 @@ bve_pls <- function( y, X, ncomp=10, ratio=0.75, VIP.threshold=1 ){
     y <- as.matrix(y)
   }
 
+  # Strip X
+  X <- unclass(as.matrix(X))
+
   # Local variables
   nn <- dim( X )[1]
   pp <- dim( X )[2]

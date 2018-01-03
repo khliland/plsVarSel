@@ -49,6 +49,9 @@ rep_pls <- function( y, X, ncomp=5, ratio=0.75, VIP.threshold= 0.5, N=3  ){
     y <- as.matrix(y)
   }
   
+  # Strip X
+  X <- unclass(as.matrix(X))
+
   # Local variables
   n1 <- dim( X )[1]
   p1 <- dim( X )[2]

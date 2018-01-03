@@ -47,6 +47,8 @@
 #' @importFrom genalg rbga.bin
 #' @export
 ga_pls<- function(y,X, GA.threshold=10, iters=5, popSize=100){ 
+  # Strip X
+  X <- unclass(as.matrix(X))
   evalFunc <- evaluateX
   monitorFunc <- monitor
   n <- ncol(X)

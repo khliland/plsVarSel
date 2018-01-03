@@ -60,6 +60,9 @@ spa_pls<- function(y, X, ncomp=10, N=3, ratio=0.8, Qv=10, SPA.threshold=0.05){
     y <- as.matrix(y)
   }
   
+  # Strip X
+  X <- unclass(as.matrix(X))
+
   Mx <- dim(X)[1]
   Nx <- dim(X)[2] 
   Qs <- floor(Mx*ratio)
