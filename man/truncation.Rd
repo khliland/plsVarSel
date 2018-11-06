@@ -25,7 +25,7 @@ methods for multivariate regression.
 \details{
 Loading weights are truncated around their median based on confidence intervals
 for modelling without replicates (Lenth et al.). The arguments passed to \code{mvrV} include
-all possible arguments to \code{\link[pls]{cppls}} and the following truncation parameters 
+all possible arguments to \code{\link[pls:mvr]{cppls}} and the following truncation parameters 
 (with defaults) trunc.pow=FALSE, truncation=NULL, trunc.width=NULL, trunc.weight=0, 
 reorth=FALSE, symmetric=FALSE.
 

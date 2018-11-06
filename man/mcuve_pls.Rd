@@ -4,7 +4,8 @@
 \alias{mcuve_pls}
 \title{Uninformative variable elimination in PLS (UVE-PLS)}
 \usage{
-mcuve_pls(y, X, ncomp = 10, N = 3, ratio = 0.75, MCUVE.threshold = NA)
+mcuve_pls(y, X, ncomp = 10, N = 3, ratio = 0.75,
+  MCUVE.threshold = NA)
 }
 \arguments{
 \item{y}{vector of response values (\code{numeric} or \code{factor}).}

@@ -2,9 +2,13 @@
 % Please edit documentation in R/IPW.R
 \name{ipw_pls}
 \alias{ipw_pls}
+\alias{ipw_pls_legacy}
 \title{Iterative predictor weighting PLS (IPW-PLS)}
 \usage{
-ipw_pls(y, X, ncomp = 10, no.iter = 10, IPW.threshold = 0.1)
+ipw_pls(y, X, ncomp = 10, no.iter = 10, IPW.threshold = 0.01,
+  filter = "RC", scale = TRUE)
+
+ipw_pls_legacy(y, X, ncomp = 10, no.iter = 10, IPW.threshold = 0.1)
 }
 \arguments{
 \item{y}{vector of response values (\code{numeric} or \code{factor}).}
@@ -16,6 +20,10 @@ ipw_pls(y, X, ncomp = 10, no.iter = 10, IPW.threshold = 0.1)
 \item{no.iter}{the number of iterations (default = 10).}
 
 \item{IPW.threshold}{threshold for regression coefficients (default = 0.1).}
+
+\item{filter}{which filtering method to use (among "RC", "SR", "LW", "VIP", "sMC")}
+
+\item{scale}{standardize data (default=TRUE, as in reference)}
 }
 \value{
 Returns a vector of variable numbers corresponding to the model 
@@ -30,6 +38,9 @@ importance is computed after fitting a PLSR model (with complexity chosen based
 on predictive performance). The importance measure is used both to re-scale the 
 original X-variables and to eliminate the least important variables before
 subsequent model re-fitting
+
+The IPW implementation was corrected in \code{plsVarSel} version 0.9.5. For backward
+compatibility the old implementation is included as \code{ipw_pls_legacy}.
 }
 \examples{
 data(gasoline, package = "pls")
@@ -49,5 +60,5 @@ M. Forina, C. Casolino, C. Pizarro Millan, Iterative predictor weighting
 \code{\link{lda_from_pls}}, \code{\link{setDA}}.
 }
 \author{
-Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
+Kristian Hovde Liland
 }

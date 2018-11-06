@@ -156,7 +156,7 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
           pls       <- cppls(y ~ X, ncomp=comp, data=data, validation = validation, Y.add = Y.add, ...)
         }
       } else {
-        pls       <- pls(y ~ X, ncomp=comp, data=data, validation = validation, ...)
+        pls       <- plsr(y ~ X, ncomp=comp, data=data, validation = validation, ...)
       }
     }
     # factor y
@@ -175,6 +175,8 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
       opt.comp <- comp
     }
     comps[i]  <- opt.comp
+    
+    # Save error estimate
     if(is.null(newX) || is.null(newy)){
       if (modeltype == "prediction"){
         error[i]  <- RMSEP(pls, estimate = "CV")$val[1,1, opt.comp + 1]

@@ -6,10 +6,6 @@
 \alias{sMC}
 \alias{LW}
 \alias{RC}
-\alias{SR}
-\alias{sMC}
-\alias{LW}
-\alias{RC}
 \title{Filter methods for variable selection with Partial Least Squares.}
 \usage{
 VIP(pls.object, opt.comp, p = dim(pls.object$coef)[1])
