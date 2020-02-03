@@ -67,6 +67,7 @@ ipw_pls <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.01, filter="RC",
   }
   z <- s/sum(s) # First scaling, before PLS
   rem <- numeric(0)
+  early_stopping <- FALSE
   for(i in 1:no.iter){
     # Rescaling
     X  <- Xorig*rep(z,each=n)
@@ -91,13 +92,21 @@ ipw_pls <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.01, filter="RC",
     
     # Calculate importance
     z <- abs(weights)*s
-    z <- z/sum(z)
+    z <- z0 <- z/sum(z)
     z[z<IPW.threshold] <- 0
     if(sum(z)==0){
-      stop('The combination of parameters removed all variables.')
+      z0[z0<max(z0)] <- 0
+      z <- z0
+      warning('The combination of parameters removed all variables, defaulting single variable.')
+      early_stopping <- TRUE
+      break()
     }
   }
-  ipw.selection <- plsVarSel:::simplify(which(z >= IPW.threshold))
+  if(early_stopping){
+    ipw.selection <- which.max(z)
+  } else {
+    ipw.selection <- simplify(which(z >= IPW.threshold))
+  }
   return(list(ipw.selection=ipw.selection, ipw.importance=z))
 }
 

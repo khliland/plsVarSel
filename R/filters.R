@@ -15,6 +15,7 @@
 #' @param p number of variables in PLS model.
 #' @param X data matrix used as predictors in PLS modelling.
 #' @param alpha_mc quantile significance for automatic selection of variables in \code{sMC}.
+#' @param nsel number of variables to select.
 #'
 #' @return A vector having the same lenght as the number of variables in the associated
 #' PLS model. High values are associated with high importance, explained variance or
@@ -37,13 +38,16 @@
 #' library(pls)
 #' pls  <- plsr(octane ~ NIR, ncomp = 10, validation = "LOO", data = gasoline)
 #' comp <- which.min(pls$validation$PRESS)
-#' X    <- gasoline$NIR
+#' X    <- unclass(gasoline$NIR)
 #' vip <- VIP(pls, comp)
 #' sr  <- SR (pls, comp, X)
 #' smc <- sMC(pls, comp, X)
 #' lw  <- LW (pls, comp)
 #' rc  <- RC (pls, comp)
-#' matplot(scale(cbind(vip, sr, smc, lw, rc)), type = 'l')
+#' urc <- URC(pls, comp)
+#' frc <- FRC(pls, comp)
+#' mrm <- mRMR(pls, 401, X)$score
+#' matplot(scale(cbind(vip, sr, smc, lw, rc, urc, frc, mrm)), type = 'l')
 #'
 #' @export
 VIP <- function (pls.object, opt.comp, p = dim(pls.object$coef)[1]) {
@@ -118,19 +122,42 @@ sMC <- function(pls.object, opt.comp, X, alpha_mc = 0.05){
 #' @export
 LW <- function(pls.object, opt.comp)
   # Loading weights
-  pls.object$loading.weights[ , opt.comp]
+  abs(pls.object$loading.weights[ , opt.comp])
 
 #' @rdname VIP
 #' @export
 RC <- function(pls.object, opt.comp)
   # Regression coefficients
-  pls.object$coef[ , 1, opt.comp]
+  abs(pls.object$coef[ , 1, opt.comp])
 
 # Remove names and sort vector
 simplify <- function(X){
   names(X) <- NULL
   sort(X)
 }
+
+#' @rdname VIP
+#' @export
+URC <- function(pls.object, opt.comp){
+  RC  <- pls.object$coefficients[ , 1, opt.comp]
+  return(as.numeric(abs(RC) / max(abs(RC))))
+}
+
+#' @rdname VIP
+#' @export
+FRC <- function(pls.object, opt.comp){
+  RC  <- pls.object$coefficients[ , 1, opt.comp]
+  URC <- abs(RC) / max(abs(RC))
+  return(URC / pls.object$validation$PRESS[opt.comp])
+}
+
+#' @rdname VIP
+#' @importFrom praznik MRMR
+#' @export
+mRMR <- function(pls.object, nsel, X){
+  MRMR(data.frame(X), pls.object$Yscores[,1], k = nsel, threads = 0)
+}
+
 
 
 ###############
@@ -151,10 +178,14 @@ simplify <- function(X){
 #' @param validation type of validation in the PLS modelling (default = "LOO").
 #' @param LW.threshold threshold for Loading Weights if applied (default = NULL).
 #' @param RC.threshold threshold for Regression Coefficients if applied (default = NULL).
+#' @param URC.threshold threshold for Unit normalized Regression Coefficients if applied (default = NULL).
+#' @param FRC.threshold threshold for Fitness normalized Regression Coefficients if applied (default = NULL).
 #' @param JT.threshold threshold for Jackknife Testing if applied (default = NULL).
 #' @param VIP.threshold threshold for Variable Importance on Projections if applied (default = NULL).
 #' @param SR.threshold threshold for Selectivity Ration if applied (default = NULL).
 #' @param sMC.threshold threshold for Significance Multivariate Correlation if applied (default = NULL).
+#' @param mRMR.threshold threshold for minimum Redundancy Maximum Releveance if applied (default = NULL).
+#' @param WVC.threshold threshold for Weighted Variable Contribution if applied (default = NULL).
 #' @param ... additional paramters for \code{pls}, e.g. segmentation or similar.
 #'
 #' @details Filter methods are applied for variable selection with PLSR. This function can 
@@ -170,9 +201,9 @@ simplify <- function(X){
 #' methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 #' 118 (2012) 62-69.
 #'
-#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
+#' @seealso \code{\link{VIP}} (SR/sMC/LW/RC/URC/FRC/mRMR), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
 #' \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
+#' \code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}, \code{\link{WVC_pls}}, \code{\link{T2_pls}}.
 #'
 #' @examples
 #' data(gasoline, package = "pls")
@@ -184,8 +215,9 @@ simplify <- function(X){
 #' @import pls
 #' @export
 filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), validation = "LOO", 
-                       LW.threshold = NULL, RC.threshold = NULL, JT.threshold = NULL,
-                       VIP.threshold = NULL, SR.threshold = NULL, sMC.threshold = NULL,...){
+                       LW.threshold = NULL, RC.threshold = NULL, URC.threshold = NULL, FRC.threshold = NULL,
+                       JT.threshold = NULL, VIP.threshold = NULL, SR.threshold = NULL, sMC.threshold = NULL,
+                       mRMR.threshold = NULL, WVC.threshold = NULL, ...){
   
   # Strip X
   X <- unclass(as.matrix(X))
@@ -269,7 +301,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       for(i in 1:length(RC.threshold)){
         selections$RC[[i+2]] <- simplify(which(RCvalues > RC.threshold[i]))
         if(length(selections$RC[[i+2]]) < ncomp)
-          selections$RC[[i+2]] <- simplify(order(LWvalues, decreasing = TRUE)[1:ncomp])
+          selections$RC[[i+2]] <- simplify(order(RCvalues, decreasing = TRUE)[1:ncomp])
         pls.this <- plsr(y ~ X[,selections$RC[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
         if (modeltype == "prediction"){
           comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
@@ -286,6 +318,74 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
     }
   }
   
+  if(!is.null(URC.threshold)){
+    URCvalues <-  URC(pls.object,opt.comp)
+    if(is.logical(URC.threshold))
+      URC.threshold <- 0.01
+    if(length(URC.threshold) == 1){ # Single threshold
+      selections$URC <- simplify(which(URCvalues > URC.threshold))
+      if(length(selections$URC) < ncomp)
+        selections$URC <- simplify(order(URCvalues, decreasing = TRUE)[1:ncomp])
+    } else {
+      selections$URC <- list()
+      selections$URC$comps  <- numeric(length(URC.threshold))
+      selections$URC$RMSECV <- numeric(length(URC.threshold))
+      names(selections$URC$comps)  <- URC.threshold
+      names(selections$URC$RMSECV) <- URC.threshold
+      for(i in 1:length(URC.threshold)){
+        selections$URC[[i+2]] <- simplify(which(URCvalues > URC.threshold[i]))
+        if(length(selections$URC[[i+2]]) < ncomp)
+          selections$URC[[i+2]] <- simplify(order(URCvalues, decreasing = TRUE)[1:ncomp])
+        pls.this <- plsr(y ~ X[,selections$URC[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$URC$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$URC$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$URC[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$URC$RMSECV[i] <- err[comp]/n
+          selections$URC$comps[i]  <- comp
+        }
+      }
+    }
+  }
+
+  if(!is.null(FRC.threshold)){
+    FRCvalues <-  FRC(pls.object,opt.comp)
+    if(is.logical(FRC.threshold))
+      FRC.threshold <- 0.01
+    if(length(FRC.threshold) == 1){ # Single threshold
+      selections$FRC <- simplify(which(FRCvalues > FRC.threshold))
+      if(length(selections$FRC) < ncomp)
+        selections$FRC <- simplify(order(FRCvalues, decreasing = TRUE)[1:ncomp])
+    } else {
+      selections$FRC <- list()
+      selections$FRC$comps  <- numeric(length(FRC.threshold))
+      selections$FRC$RMSECV <- numeric(length(FRC.threshold))
+      names(selections$FRC$comps)  <- FRC.threshold
+      names(selections$FRC$RMSECV) <- FRC.threshold
+      for(i in 1:length(FRC.threshold)){
+        selections$FRC[[i+2]] <- simplify(which(FRCvalues > FRC.threshold[i]))
+        if(length(selections$FRC[[i+2]]) < ncomp)
+          selections$FRC[[i+2]] <- simplify(order(FRCvalues, decreasing = TRUE)[1:ncomp])
+        pls.this <- plsr(y ~ X[,selections$FRC[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$FRC$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$FRC$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$FRC[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$FRC$RMSECV[i] <- err[comp]/n
+          selections$FRC$comps[i]  <- comp
+        }
+      }
+    }
+  }
+
   if(!is.null(VIP.threshold)){
     VIPvalues <- VIP(pls.object, opt.comp)
     if(is.logical(VIP.threshold))
@@ -417,6 +517,74 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
           comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
           selections$JT$RMSECV[i] <- err[comp]/n
           selections$JT$comps[i]  <- comp
+        }
+      }
+    }
+  }
+  
+  if(!is.null(mRMR.threshold)){
+    mRMRvalues <-  mRMR(pls.object,ncol(X),X)$selection
+    if(is.logical(mRMR.threshold))
+      mRMR.threshold <- 1
+    if(length(mRMR.threshold) == 1){ # Single threshold
+      selections$mRMR <- simplify(mRMRvalues[1:mRMR.threshold])#which(mRMRvalues > mRMR.threshold))
+      if(length(selections$mRMR) < ncomp)
+        selections$mRMR <- simplify(order(mRMRvalues, decreasing = TRUE)[1:ncomp])
+    } else {
+      selections$mRMR <- list()
+      selections$mRMR$comps  <- numeric(length(mRMR.threshold))
+      selections$mRMR$RMSECV <- numeric(length(mRMR.threshold))
+      names(selections$mRMR$comps)  <- mRMR.threshold
+      names(selections$mRMR$RMSECV) <- mRMR.threshold
+      for(i in 1:length(mRMR.threshold)){
+        selections$mRMR[[i+2]] <- simplify(mRMRvalues[1:mRMR.threshold])#which(mRMRvalues > mRMR.threshold[i]))
+        if(length(selections$mRMR[[i+2]]) < ncomp)
+          selections$mRMR[[i+2]] <- simplify(mRMRvalues[1:ncomp])
+        pls.this <- plsr(y ~ X[,selections$mRMR[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$mRMR$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$mRMR$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$mRMR[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$mRMR$RMSECV[i] <- err[comp]/n
+          selections$mRMR$comps[i]  <- comp
+        }
+      }
+    }
+  }
+
+  if(!is.null(WVC.threshold)){
+    WVCvalues <-  abs(WVC_pls(y,X,ncomp,TRUE)$B[-1,1,opt.comp])
+    if(is.logical(WVC.threshold))
+      WVC.threshold <- 0.9
+    if(length(WVC.threshold) == 1){ # Single threshold
+      selections$WVC <- simplify(which(WVCvalues > WVC.threshold))
+      if(length(selections$WVC) < ncomp)
+        selections$WVC <- simplify(order(WVCvalues, decreasing = TRUE)[1:ncomp])
+    } else {
+      selections$WVC <- list()
+      selections$WVC$comps  <- numeric(length(WVC.threshold))
+      selections$WVC$RMSECV <- numeric(length(WVC.threshold))
+      names(selections$WVC$comps)  <- WVC.threshold
+      names(selections$WVC$RMSECV) <- WVC.threshold
+      for(i in 1:length(WVC.threshold)){
+        selections$WVC[[i+2]] <- simplify(which(WVCvalues > WVC.threshold[i]))
+        if(length(selections$WVC[[i+2]]) < ncomp)
+          selections$WVC[[i+2]] <- simplify(order(WVCvalues, decreasing = TRUE)[1:ncomp])
+        pls.this <- plsr(y ~ X[,selections$WVC[[i+2]], drop=FALSE], ncomp = ncomp, validation = validation, ...)
+        if (modeltype == "prediction"){
+          comp <- ifelse(ncomp.opt == "minimum", which.min(pls.this$valid$PRESS[1,]), ncomp)
+          selections$WVC$RMSECV[i] <- RMSEP(pls.this, estimate="CV")$val[1,1,comp+1]
+          selections$WVC$comps[i]  <- comp
+        } else if (modeltype == "classification"){
+          classes <- lda_from_pls_cv(pls.this, X[,selections$WVC[[i+2]], drop=FALSE], y.orig, ncomp)
+          err  <- colSums(classes!=y.orig)
+          comp <- ifelse(ncomp.opt == "minimum", which.min(err), ncomp)
+          selections$WVC$RMSECV[i] <- err[comp]/n
+          selections$WVC$comps[i]  <- comp
         }
       }
     }

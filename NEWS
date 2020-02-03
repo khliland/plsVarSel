@@ -3,7 +3,7 @@ Interfaces and methods for variable selection in Partial Least Squares.
 Kristian Hovde Liland, Tahir Mehmood, and Solve Sæbø, Norway
 
 ##### Version 0.9.5
-Date: 06 November 2018
+Date: 04 December 2018
 >> Fixed implementation of ipw_pls.
 
 ##### Version 0.9.3

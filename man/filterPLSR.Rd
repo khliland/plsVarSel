@@ -6,8 +6,9 @@
 \usage{
 filterPLSR(y, X, ncomp = 10, ncomp.opt = c("minimum", "same"),
   validation = "LOO", LW.threshold = NULL, RC.threshold = NULL,
-  JT.threshold = NULL, VIP.threshold = NULL, SR.threshold = NULL,
-  sMC.threshold = NULL, ...)
+  URC.threshold = NULL, FRC.threshold = NULL, JT.threshold = NULL,
+  VIP.threshold = NULL, SR.threshold = NULL, sMC.threshold = NULL,
+  mRMR.threshold = NULL, WVC.threshold = NULL, ...)
 }
 \arguments{
 \item{y}{vector of response values (\code{numeric} or \code{factor}).}
@@ -25,6 +26,10 @@ or \code{ncomp} (same).}
 
 \item{RC.threshold}{threshold for Regression Coefficients if applied (default = NULL).}
 
+\item{URC.threshold}{threshold for Unit normalized Regression Coefficients if applied (default = NULL).}
+
+\item{FRC.threshold}{threshold for Fitness normalized Regression Coefficients if applied (default = NULL).}
+
 \item{JT.threshold}{threshold for Jackknife Testing if applied (default = NULL).}
 
 \item{VIP.threshold}{threshold for Variable Importance on Projections if applied (default = NULL).}
@@ -32,6 +37,10 @@ or \code{ncomp} (same).}
 \item{SR.threshold}{threshold for Selectivity Ration if applied (default = NULL).}
 
 \item{sMC.threshold}{threshold for Significance Multivariate Correlation if applied (default = NULL).}
+
+\item{mRMR.threshold}{threshold for minimum Redundancy Maximum Releveance if applied (default = NULL).}
+
+\item{WVC.threshold}{threshold for Weighted Variable Contribution if applied (default = NULL).}
 
 \item{...}{additional paramters for \code{pls}, e.g. segmentation or similar.}
 }
@@ -63,9 +72,9 @@ methods in Partial Least Squares Regression, Chemometrics and Intelligent Labora
 118 (2012) 62-69.
 }
 \seealso{
-\code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
+\code{\link{VIP}} (SR/sMC/LW/RC/URC/FRC/mRMR), \code{\link{filterPLSR}}, \code{\link{spa_pls}}, 
 \code{\link{stpls}}, \code{\link{truncation}}, \code{\link{bve_pls}}, \code{\link{mcuve_pls}},
-\code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}.
+\code{\link{ipw_pls}}, \code{\link{ga_pls}}, \code{\link{rep_pls}}, \code{\link{WVC_pls}}, \code{\link{T2_pls}}.
 }
 \author{
 Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.

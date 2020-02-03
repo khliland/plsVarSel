@@ -6,6 +6,9 @@
 \alias{sMC}
 \alias{LW}
 \alias{RC}
+\alias{URC}
+\alias{FRC}
+\alias{mRMR}
 \title{Filter methods for variable selection with Partial Least Squares.}
 \usage{
 VIP(pls.object, opt.comp, p = dim(pls.object$coef)[1])
@@ -17,6 +20,12 @@ sMC(pls.object, opt.comp, X, alpha_mc = 0.05)
 LW(pls.object, opt.comp)
 
 RC(pls.object, opt.comp)
+
+URC(pls.object, opt.comp)
+
+FRC(pls.object, opt.comp)
+
+mRMR(pls.object, nsel, X)
 }
 \arguments{
 \item{pls.object}{\code{mvr} object from PLS regression.}
@@ -28,6 +37,8 @@ RC(pls.object, opt.comp)
 \item{X}{data matrix used as predictors in PLS modelling.}
 
 \item{alpha_mc}{quantile significance for automatic selection of variables in \code{sMC}.}
+
+\item{nsel}{number of variables to select.}
 }
 \value{
 A vector having the same lenght as the number of variables in the associated
@@ -45,13 +56,16 @@ data(gasoline, package = "pls")
 library(pls)
 pls  <- plsr(octane ~ NIR, ncomp = 10, validation = "LOO", data = gasoline)
 comp <- which.min(pls$validation$PRESS)
-X    <- gasoline$NIR
+X    <- unclass(gasoline$NIR)
 vip <- VIP(pls, comp)
 sr  <- SR (pls, comp, X)
 smc <- sMC(pls, comp, X)
 lw  <- LW (pls, comp)
 rc  <- RC (pls, comp)
-matplot(scale(cbind(vip, sr, smc, lw, rc)), type = 'l')
+urc <- URC(pls, comp)
+frc <- FRC(pls, comp)
+mrm <- mRMR(pls, 401, X)$score
+matplot(scale(cbind(vip, sr, smc, lw, rc, urc, frc, mrm)), type = 'l')
 
 }
 \references{

@@ -6,7 +6,7 @@
 #' factor responses as classification. Default classification is PLS + LDA, 
 #' but \code{setDA()} can be used to choose PLS + QDA or PLS with response column maximization.
 #' 
-#' @importFrom stats approx chisq.test drop.terms fitted formula
+#' @importFrom stats approx chisq.test cor drop.terms fitted formula
 #'  median model.frame model.matrix model.response napredict
 #'  optim optimise optimize pf predict pt qf qt quantile
 #'  residuals runif sd t.test update var wilcox.test
