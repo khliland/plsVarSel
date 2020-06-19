@@ -4,8 +4,7 @@
 \alias{spa_pls}
 \title{Sub-window permutation analysis coupled with PLS (SwPA-PLS)}
 \usage{
-spa_pls(y, X, ncomp = 10, N = 3, ratio = 0.8, Qv = 10,
-  SPA.threshold = 0.05)
+spa_pls(y, X, ncomp = 10, N = 3, ratio = 0.8, Qv = 10, SPA.threshold = 0.05)
 }
 \arguments{
 \item{y}{vector of response values (\code{numeric} or \code{factor}).}

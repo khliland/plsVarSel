@@ -4,11 +4,24 @@
 \alias{filterPLSR}
 \title{Optimisation of filters for Partial Least Squares}
 \usage{
-filterPLSR(y, X, ncomp = 10, ncomp.opt = c("minimum", "same"),
-  validation = "LOO", LW.threshold = NULL, RC.threshold = NULL,
-  URC.threshold = NULL, FRC.threshold = NULL, JT.threshold = NULL,
-  VIP.threshold = NULL, SR.threshold = NULL, sMC.threshold = NULL,
-  mRMR.threshold = NULL, WVC.threshold = NULL, ...)
+filterPLSR(
+  y,
+  X,
+  ncomp = 10,
+  ncomp.opt = c("minimum", "same"),
+  validation = "LOO",
+  LW.threshold = NULL,
+  RC.threshold = NULL,
+  URC.threshold = NULL,
+  FRC.threshold = NULL,
+  JT.threshold = NULL,
+  VIP.threshold = NULL,
+  SR.threshold = NULL,
+  sMC.threshold = NULL,
+  mRMR.threshold = NULL,
+  WVC.threshold = NULL,
+  ...
+)
 }
 \arguments{
 \item{y}{vector of response values (\code{numeric} or \code{factor}).}

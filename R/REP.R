@@ -140,9 +140,9 @@ rep_pls <- function( y, X, ncomp=5, ratio=0.75, VIP.threshold= 0.5, N=3  ){
           tst <- t.test( predy.list[[opt.iter]], predy.list[[ii]], paired=T, alternative="greater" )
         } else if(modeltype == "classification"){
           tst <- chisq.test( predy.list[[opt.iter]], predy.list[[ii]])
-          if(tst$p.value > 0.1)  {
-            sel.iter <- ii
-          }
+        }
+        if(tst$p.value > 0.1)  {
+          sel.iter <- ii
         }
       }
     }

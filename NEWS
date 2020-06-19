@@ -2,6 +2,10 @@ NEWS file for package plsVarSel
 Interfaces and methods for variable selection in Partial Least Squares.
 Kristian Hovde Liland, Tahir Mehmood, and Solve Sæbø, Norway
 
+##### Version 0.9.6
+Date: 03 April 2020
+>> Fixed bug in rep_pls and improved documentation of sMC.
+
 ##### Version 0.9.5
 Date: 04 December 2018
 >> Fixed implementation of ipw_pls.

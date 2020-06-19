@@ -5,8 +5,15 @@
 \alias{ipw_pls_legacy}
 \title{Iterative predictor weighting PLS (IPW-PLS)}
 \usage{
-ipw_pls(y, X, ncomp = 10, no.iter = 10, IPW.threshold = 0.01,
-  filter = "RC", scale = TRUE)
+ipw_pls(
+  y,
+  X,
+  ncomp = 10,
+  no.iter = 10,
+  IPW.threshold = 0.01,
+  filter = "RC",
+  scale = TRUE
+)
 
 ipw_pls_legacy(y, X, ncomp = 10, no.iter = 10, IPW.threshold = 0.1)
 }

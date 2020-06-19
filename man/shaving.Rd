@@ -6,13 +6,25 @@
 \alias{print.shaved}
 \title{Repeated shaving of variables}
 \usage{
-shaving(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC"),
-  prop = 0.2, min.left = 2, comp.type = c("CV", "max"),
-  validation = c("CV", 1), fixed = integer(0), newy = NULL,
-  newX = NULL, segments = 10, plsType = "plsr", Y.add = NULL, ...)
+shaving(
+  y,
+  X,
+  ncomp = 10,
+  method = c("SR", "VIP", "sMC", "LW", "RC"),
+  prop = 0.2,
+  min.left = 2,
+  comp.type = c("CV", "max"),
+  validation = c("CV", 1),
+  fixed = integer(0),
+  newy = NULL,
+  newX = NULL,
+  segments = 10,
+  plsType = "plsr",
+  Y.add = NULL,
+  ...
+)
 
-\method{plot}{shaved}(x, y, what = c("error", "spectra"),
-  index = "min", log = "x", ...)
+\method{plot}{shaved}(x, y, what = c("error", "spectra"), index = "min", log = "x", ...)
 
 \method{print}{shaved}(x, ...)
 }

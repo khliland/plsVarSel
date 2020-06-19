@@ -4,10 +4,22 @@
 \alias{mvrV}
 \title{Multivariate regression function}
 \usage{
-mvrV(formula, ncomp, Y.add, data, subset, na.action, shrink,
-  method = c("truncation", "stpls", "model.frame"), scale = FALSE,
-  validation = c("none", "CV", "LOO"), model = TRUE, x = FALSE,
-  y = FALSE, ...)
+mvrV(
+  formula,
+  ncomp,
+  Y.add,
+  data,
+  subset,
+  na.action,
+  shrink,
+  method = c("truncation", "stpls", "model.frame"),
+  scale = FALSE,
+  validation = c("none", "CV", "LOO"),
+  model = TRUE,
+  x = FALSE,
+  y = FALSE,
+  ...
+)
 }
 \arguments{
 \item{formula}{a model formula. Most of the lm formula constructs are supported. See below.}

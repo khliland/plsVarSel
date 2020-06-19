@@ -4,8 +4,13 @@
 \alias{summary.mvrV}
 \title{Summary method for stpls and trunc}
 \usage{
-\method{summary}{mvrV}(object, what = c("all", "validation", "training"),
-  digits = 4, print.gap = 2, ...)
+\method{summary}{mvrV}(
+  object,
+  what = c("all", "validation", "training"),
+  digits = 4,
+  print.gap = 2,
+  ...
+)
 }
 \arguments{
 \item{object}{an mvrV object}

@@ -4,8 +4,7 @@
 \alias{T2_pls}
 \title{Hotelling's T^2 based variable selection in PLS -- T^2-PLS)}
 \usage{
-T2_pls(ytr, Xtr, yts, Xts, ncomp = 10, alpha = c(0.2, 0.15, 0.1, 0.05,
-  0.01))
+T2_pls(ytr, Xtr, yts, Xts, ncomp = 10, alpha = c(0.2, 0.15, 0.1, 0.05, 0.01))
 }
 \arguments{
 \item{ytr}{Vector of responses for model training.}
