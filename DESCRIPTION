@@ -2,14 +2,26 @@ Encoding: UTF-8
 Package: plsVarSel
 Type: Package
 Title: Variable Selection in Partial Least Squares
-Version: 0.9.6
-Date: 2020-04-03
-Author: Kristian Hovde Liland, Tahir Mehmood, Solve Sæbø
-Maintainer: Kristian Hovde Liland <kristian.liland@nmbu.no>
+Version: 0.9.7
+Date: 2021-12-28
+Authors@R: 
+    c(person(given = "Kristian Hovde",
+             family = "Liland",
+             role = c("aut", "cre"),
+             email = "kristian.liland@nmbu.no",
+             comment = c(ORCID = "0000-0001-6468-9423")),
+      person(given = "Tahir",
+             family = "Mehmood",
+             role = c("ctb")),
+      person(given = "Solve",
+             family = "Sæbø",
+             role = c("ctb")))
 Description: Interfaces and methods for variable selection in Partial Least
     Squares. The methods include filter methods, wrapper methods and embedded
     methods. Both regression and classification is supported.
 License: GPL (>=2)
+URL: https://github.com/khliland/plsVarSel/
+BugReports: https://github.com/khliland/plsVarSel/issues/
 Depends:
     pls
 Imports:
@@ -26,4 +38,4 @@ Imports:
     praznik
 Suggests:
     Rmpi
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1

@@ -14,6 +14,8 @@ but \code{setDA()} can be used to choose PLS + QDA or PLS with response column m
 T. Mehmood, K.H. Liland, L. Snipen, S. Sæbø, A review of variable selection 
 methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 118 (2012) 62-69.
+T. Mehmood, S. Sæbø, K.H. Liland, Comparison of variable selection methods in partial least
+squares regression, Journal of Chemometrics 34 (2020) e3226.
 }
 \seealso{
 \code{\link{VIP}} (SR/sMC/LW/RC), \code{\link{filterPLSR}}, \code{\link{shaving}}, 
