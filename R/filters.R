@@ -22,7 +22,7 @@
 #' relevance to the model.
 #' 
 #' The sMC has an attribute "quantile", which is the associated quantile of the
-#' F-distribuiton, which can be used as a cut-off for significant variables, similar
+#' F-distribution, which can be used as a cut-off for significant variables, similar
 #' to the cut-off of 1 associated with the VIP.
 #'
 #' @author Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
