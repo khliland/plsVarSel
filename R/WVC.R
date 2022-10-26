@@ -8,6 +8,15 @@
 #'
 #' @return loading weights, loadings, regression coefficients, scores and Y-loadings
 #' plus the WVC weights.
+#' 
+#' @description This implements the PLS-WVC2 component dependent version of WVC from Lin et al., i.e.,
+#' using Equations 14, 16 and 19. The 
+#' implementation is used in T. Mehmood, S. Sæbø, K.H. Liland, Comparison of variable selection methods in partial least
+#' squares regression, Journal of Chemometrics 34 (2020) e3226. However, there is a mistake
+#' in the notation in Mehmood et al. exchanging the denominator of Equation 19 (w'X'Xw) with (w'X'Yw).
+#' 
+#' @references Variable selection in partial least squares with the weighted variable contribution to the first singular value of the covariance matrix,
+#' Weilu Lin, Haifeng Hang, Yingping Zhuang, Siliang Zhang, Chemometrics and Intelligent Laboratory Systems 183 (2018) 113–121.
 #'
 #' @examples
 #' library(pls)
@@ -48,12 +57,13 @@ WVC_pls <- function(y, X, ncomp, normalize=FALSE, threshold=NULL){
     p  <- crossprod(X,s) /c(crossprod(s))
     q  <- crossprod(y,s) /c(crossprod(s))
     
-    EE[a] <- t(X%*%w)%*%y%*%q / (t(X%*%w)%*%X%*%w )
-    SS[a] <- t(X%*%w)%*%y%*%q 
+    EE[a] <- t(X%*%w)%*%y%*%q / (t(X%*%w)%*%X%*%w ) # alpha (Eq. 19)
+    SS[a] <- t(X%*%w)%*%y%*%q                       # s (Eq. 14)
     W[,a] <- w # loading weights
     for(j in 1:nrow(W)){
       if(a==1){
-        WVC[j,a] <- sqrt(ncol(X) *EE[1:a]%*% c(W[j,1:a])^2 %*%t(SS[1:a])/c(EE[1:a]%*%t(SS[1:a])))
+        WVC[j,a] <- sqrt(ncol(X) *EE[1:a]%*% c(W[j,1:a])^2 %*%t(SS[1:a])/ # m * alpha *w^2 * s
+                           c(EE[1:a]%*%t(SS[1:a])))                       # alpha * s (Eq. 16)
       } else{
         WVC[j,a] <- sqrt(ncol(X) *EE[1:a]%*% diag(W[j,1:a])^2 %*%SS[1:a]/c(EE[1:a]%*%SS[1:a]))
       }

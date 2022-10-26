@@ -22,7 +22,11 @@ loading weights, loadings, regression coefficients, scores and Y-loadings
 plus the WVC weights.
 }
 \description{
-Weighted Variable Contribution in PLS (WVC-PLS)
+This implements the PLS-WVC2 component dependent version of WVC from Lin et al., i.e.,
+using Equations 14, 16 and 19. The 
+implementation is used in T. Mehmood, S. Sæbø, K.H. Liland, Comparison of variable selection methods in partial least
+squares regression, Journal of Chemometrics 34 (2020) e3226. However, there is a mistake
+in the notation in Mehmood et al. exchanging the denominator of Equation 19 (w'X'Xw) with (w'X'Yw).
 }
 \examples{
 library(pls)
@@ -35,4 +39,8 @@ matplot(wvc$W[,1:3], type='l', ylab='W')
 matplot(wvcNT$W[,1:3], type='l', ylab='W, thr.=0.5')
 par(old.par)
 
+}
+\references{
+Variable selection in partial least squares with the weighted variable contribution to the first singular value of the covariance matrix,
+Weilu Lin, Haifeng Hang, Yingping Zhuang, Siliang Zhang, Chemometrics and Intelligent Laboratory Systems 183 (2018) 113–121.
 }
