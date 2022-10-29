@@ -40,3 +40,7 @@ if(interactive()){
   points(t2$mv[[2]], colMeans(gasoline$NIR)[t2$mv[[2]]], col=3, pch='o')
 }
 }
+\references{
+Tahir Mehmood, Hotelling T2 based variable selection in partial 
+least squares regression, Chemometrics and Intelligent Laboratory Systems 154 (2016), pp 23-28
+}

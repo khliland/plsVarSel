@@ -13,6 +13,9 @@
 #'
 #' @return Parameters and variables corresponding to variable selections
 #' of minimum error and minimum variable set.
+#' 
+#' @references Tahir Mehmood, Hotelling T2 based variable selection in partial 
+#' least squares regression, Chemometrics and Intelligent Laboratory Systems 154 (2016), pp 23-28
 #'
 #' @examples
 #' data(gasoline, package = "pls")
