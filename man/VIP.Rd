@@ -55,6 +55,12 @@ Various filter methods extracting and using information from
 methods are Significance Multivariate Correlation (sMC), Selectivity Ratio (SR), 
 Variable Importance in Projections (VIP), Loading Weights (LW), Regression Coefficients (RC).
 }
+\details{
+From plsVarSel 0.9.10, the VIP method handles multiple responses
+correctly, as does the LW method. All other filter methods implemented in 
+this package assume a single response and will give its results based on the
+first response in multi-response cases.
+}
 \examples{
 data(gasoline, package = "pls")
 library(pls)
