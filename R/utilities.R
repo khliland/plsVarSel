@@ -283,3 +283,130 @@ setDA <- function(LQ = NULL){
     return(LQ)
   }
 }
+
+
+t2_calc <- function(x, type, alpha, main){
+#  type <- match.arg(type)
+  phase = 1
+  method = "sw"
+  p <- ncol(x)
+  m <- nrow(x)
+  if (inherits(x, "matrix") || inherits(x, "data.frame")) 
+    (x <- array(data.matrix(x), c(m, p, 1)))
+  n <- dim(x)[3]
+  x.jk <- matrix(0, m, p)
+  t2 <- matrix(0, m, 1)
+  x.jk <- apply(x, 1:2, mean)
+  Xmv <- colMeans(x.jk)
+  S <- covar(x, method = method)
+  colm <- nrow(x)
+  name <- paste("Hotelling Control Chart")
+  for (ii in 1:m) {
+    t2[ii, 1] <- n * t(x.jk[ii, ] - Xmv) %*% solve(S) %*% 
+      (x.jk[ii, ] - Xmv)
+  }
+  ifelse(n == 1, ifelse(phase == 1, ucl <- ((colm - 1)^2)/colm * qbeta(1 - alpha, p/2, ((colm - p - 1)/2)), 
+                        ucl <- ((p * (colm + 1) * (colm - 1))/((colm^2) - colm * p)) * qf(1 - alpha, p, colm - p)), 
+         ifelse(phase == 1, ucl <- (p *  (colm - 1) * (n - 1))/(colm * n - colm - p + 1) * qf(1 - alpha, p, colm * n - colm - p + 1), 
+                ucl <- (p * (colm + 1) * (n - 1))/(colm * n - colm - p + 1) * qf(1 - alpha, p, colm * n - colm - p + 1)))
+  if (any(t2 > ucl)) {
+    cat("The following(s) point(s) fall outside of the control limits")
+    t3 <- which(t2 > ucl)
+    print(t3)
+    for (ii in 1:length(t3)) {
+      v = 1
+      k = 0
+      for (i in 1:p) {
+        k <- k + factorial(p)/(factorial(i) * factorial(p - 
+                                                          i))
+      }
+      q <- matrix(0, k, p + 3)
+      for (i in 1:p) {
+        a <- t(combn(p, i))
+        for (l in 1:nrow(a)) {
+          for (j in 1:ncol(a)) {
+            q[v, j + 3] <- a[l, j]
+          }
+          v = v + 1
+        }
+      }
+      for (i in 1:nrow(q)) {
+        b <- subset(q[i, 4:ncol(q)], q[i, 4:ncol(q)] > 
+                      0)
+        di <- length(b)
+        if (length(b) > 1) {
+          q[i, 1] <- n * t(Xmv[b] - x.jk[t3[ii], ][b]) %*% 
+            solve(S[b, b]) %*% (Xmv[b] - x.jk[t3[ii], 
+            ][b])
+        }
+        else (q[i, 1] <- n * (x.jk[t3[ii], ][b] - Xmv[b])^2/S[b, b])
+        ifelse(n == 1, ifelse(phase == 1, q[i, 2] <- ((colm - 1)^2)/colm * qbeta(1 - alpha, di/2, (((2 * (colm - 1)^2)/(3 * colm - 4) - di - 1)/2)), 
+                              q[i, 2] <- ((di * (colm + 1) * (colm - 1))/((colm^2) - colm * di)) * qf(1 - alpha, di, colm - di)), 
+               ifelse(phase == 1, q[i, 2] <- (di * (colm - 1) * (n - 1))/(colm * n - colm - di + 1) * qf(1 - alpha, di, colm * n - colm - di + 1), 
+                      q[i, 2] <- (di * (colm + 1) * (n - 1))/(colm * n - colm - di + 1) * qf(1 - alpha, di, colm * n - colm - di + 1)))
+        q[i, 3] <- 1 - pf(q[i, 1], di, colm - 1)
+      }
+      colnames(q) <- c("t2 decomp", "ucl", "p-value", 
+                       1:p)
+      print(list(`Decomposition of` = t3[ii]))
+      print(round(q, 4))
+    }
+  }
+  t3 <- which(t2 > ucl)
+  par(mar = c(4, 5, 3, 5))
+  plot(t2, ylim = c(0, 1.1 * max(max(t2), ucl)), main = name, 
+       xlab = "Sample", ylab = expression(T^2), type = "o", 
+       las = 1)
+  points(t3, t2[t3], col = 2)
+  segments(0, ucl, m, ucl, col = 2)
+  mtext(paste(" UCL=", round(ucl, 2)), side = 4, at = ucl, las = 2)
+  outList = list(name, ucl = round(ucl, 2), t2 = round(t2, 2), Xmv = round(Xmv, 2), covariance = signif(S, 2))
+  return(outList)
+}
+
+covar <- function (x, stat, method, ...) 
+{
+  p <- ncol(x)
+  m <- nrow(x)
+  if (inherits(x, "matrix") || inherits(x, "data.frame")) 
+    (x <- array(data.matrix(x), c(m, p, 1)))
+  n <- dim(x)[3]
+  s.jk <- matrix(0, m, p^2)
+  SS <- matrix(0, m, 1)
+  if (n > 1) {
+    arrays <- expand.grid(1:p, 1:p)
+    for (i in 1:m) {
+      for (j in 1:p^2) {
+        s.jk[i, j] <- cov(x[i, arrays[j, 1], ], x[i, 
+                                                  arrays[j, 2], ])
+      }
+    }
+    S <- matrix(colMeans(s.jk), p, p)
+    for (ii in 1:m) {
+      SS[ii] <- det(matrix(s.jk[ii, ], p, p))
+    }
+    if (missing(stat)) 
+      (return(S))
+    else (return(SS))
+  }
+  if (n == 1) {
+    if (missing(method)) 
+      (method = "sw")
+    if (method == "sw") {
+      B <- matrix(0, p, p)
+      w <- sweep(x, 2, (apply(x, 2, mean)))
+      for (i in 1:m) {
+        B <- B + w[i, , ] %*% t(w[i, , ])
+      }
+      S <- s1 <- B/(m - 1)
+    }
+    if (method == "hm") {
+      V <- matrix(0, m - 1, p)
+      for (i in 1:m - 1) {
+        V[i, ] <- x[i + 1, , ] - x[i, , ]
+      }
+      S <- s2 <- 0.5 * t(V) %*% V/(m - 1)
+    }
+    return(S)
+  }
+}

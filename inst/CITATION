@@ -1,8 +1,11 @@
 citHeader("To cite the plsVarSel package in publications use:")
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
   title        = "A review of variable selection methods in Partial Least Squares Regression",
-  author       = personList(as.person("Tahir Mehmood"), as.person("Kristian Hovde Liland"), as.person("Lars Snipen"), as.person("Solve Sæbø")),
+  author       = c(person(c("Tahir", "Mehmood")), 
+                   person(c(c("Kristian", "Hovde"), "Liland")), 
+                   person(c("Lars", "Snipen")), 
+                   person(c("Solve", "Sæbø"))),
   year         = "2012",
   volume	     = "118",
   pages        = "62-69",

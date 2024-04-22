@@ -28,7 +28,8 @@
 #'   points(t2$mv[[1]], colMeans(gasoline$NIR)[t2$mv[[1]]], col=2, pch='x')
 #'   points(t2$mv[[2]], colMeans(gasoline$NIR)[t2$mv[[2]]], col=3, pch='o')
 #' }
-#' @importFrom MSQC mult.chart
+#' @importFrom stats cov qbeta
+#' @importFrom utils combn
 #' @export
 T2_pls <- function(ytr, Xtr, yts, Xts, ncomp = 10, alpha = c(0.2, 0.15, 0.1, 0.05, 0.01)){
   pls.cv <- plsr(ytr ~ Xtr, ncomp=ncomp, validation = "CV")
@@ -38,7 +39,9 @@ T2_pls <- function(ytr, Xtr, yts, Xts, ncomp = 10, alpha = c(0.2, 0.15, 0.1, 0.0
   R <- matrix(NA, length(alpha), 5)
   V <- vector('list', length(alpha))
   for(k in 1:length(alpha)){
-    T2.chart <- mult.chart(pls.lwd, type = "t2", alpha = alpha[k], main = "T2 chart for PLS loadings")
+    T2.chart <- t2_calc(pls.lwd, type = "t2", alpha = alpha[k], main = "T2 chart for PLS loadings")
+    # Marked for deletion from CRAN
+    #T2.chart <- mult.chart(pls.lwd, type = "t2", alpha = alpha[k], main = "T2 chart for PLS loadings")
     ind.T2 <- which(T2.chart$t2 > T2.chart$ucl)
     if(length(ind.T2)<5){
       ind.T2 <- sort(T2.chart$t2, decreasing=TRUE, index.return=TRUE)$ix[1:5]

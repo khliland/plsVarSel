@@ -2,6 +2,10 @@ NEWS file for package plsVarSel
 Interfaces and methods for variable selection in Partial Least Squares.
 Kristian Hovde Liland, Tahir Mehmood, and Solve Sæbø, Norway
 
+##### Version 0.9.11
+Date: 22 April 2024
+>> Removed dependency on MSQC package.
+
 ##### Version 0.9.10
 Date: 12 January 2023
 >> Added support for multiple responses when using VIP.
