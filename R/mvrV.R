@@ -497,7 +497,7 @@ lapplyFunc <- function(parSpec, X, FUN, nonForkInit) {
 ## Calculate the validation statistics needed for (R)MSEP and R^2.
 ## Note that it accepts any values for `estimate', but only calculates
 ## statistics for "train", "test" and "CV".
-mvrValstats <- function(object, estimate,
+mvrValstatsV <- function(object, estimate,
                         newdata, ncomp = 1:object$ncomp, comps,
                         intercept = cumulative, se = FALSE, ...)
 {
@@ -629,3 +629,166 @@ mvrValstats <- function(object, estimate,
               cumulative = cumulative))
 }
 
+## R2: Return R^2
+# R2 <- function(object, ...) UseMethod("R2")
+#' @export
+R2.mvrV <- function(object, estimate, newdata, ncomp = 1:object$ncomp, comps,
+                   intercept = cumulative, se = FALSE, ...) {
+  ## Makes the code slightly simpler:  FIXME: maybe remove
+  cumulative <- missing(comps) || is.null(comps)
+  
+  ## Figure out which estimate(s) to calculate:
+  allEstimates <- c("all", "train", "CV", "test")
+  if (missing(estimate)) {
+    ## Select the `best' available estimate
+    if (!missing(newdata)) {
+      estimate = "test"
+    } else {
+      if (!is.null(object$validation)) {
+        estimate = "CV"
+      } else {
+        estimate = "train"
+      }
+    }
+  } else {
+    estimate <- allEstimates[pmatch(estimate, allEstimates)]
+    if (any(is.na(estimate))) stop("`estimate' should be a subset of ",
+                                   paste(allEstimates, collapse = ", "))
+    if (any(estimate == "all")) {
+      estimate <- allEstimates[-1] # Try all estimates (except "all")
+      if(missing(newdata)) estimate <- setdiff(estimate, "test")
+      if(is.null(object$validation) || !cumulative)
+        estimate <- setdiff(estimate, "CV")
+    }
+  }
+  
+  ## Get the needed validation statistics:
+  cl <- match.call(expand.dots = FALSE)
+  cl$estimate <- estimate             # update estimate argument
+  cl[[1]] <- as.name("mvrValstatsV")
+  valstats <- eval(cl, parent.frame())
+  
+  ## Calculate the R^2s:
+  R2 <- 1 - valstats$SSE / c(valstats$SST)
+  
+  return(structure(list(val = R2, type = "R2", comps = valstats$comps,
+                        cumulative = valstats$cumulative, call = match.call()),
+                   class = "mvrVal"))
+}
+
+
+## MSEP: Return MSEP
+# MSEP <- function(object, ...) UseMethod("MSEP")
+#' @export
+MSEP.mvrV <- function(object, estimate, newdata, ncomp = 1:object$ncomp, comps,
+                     intercept = cumulative, se = FALSE, ...)
+{
+  ## Makes the code slightly simpler:
+  cumulative <- missing(comps) || is.null(comps)
+  
+  ## Figure out which estimate(s) to calculate:
+  allEstimates <- c("all", "train", "CV", "adjCV", "test")
+  if (missing(estimate)) {
+    ## Select the `best' available estimate
+    if (!missing(newdata)) {
+      estimate = "test"
+    } else {
+      if (!is.null(object$validation)) {
+        estimate = c("CV", "adjCV")
+      } else {
+        estimate = "train"
+      }
+    }
+  } else {
+    estimate <- allEstimates[pmatch(estimate, allEstimates)]
+    if (any(is.na(estimate))) stop("`estimate' should be a subset of ",
+                                   paste(allEstimates, collapse = ", "))
+    if (any(estimate == "all")) {
+      estimate <- allEstimates[-1] # Try all estimates (except "all")
+      if(missing(newdata)) estimate <- setdiff(estimate, "test")
+      if(is.null(object$validation) || !cumulative)
+        estimate <- setdiff(estimate, c("CV", "adjCV"))
+    }
+  }
+  
+  ## adjCV needs the statistics for CV and train, so we optionally
+  ## have to add them:
+  if (adjCV <- any(estimate == "adjCV")) {
+    ## Note: this removes any duplicate elements
+    calcestimates <- union(estimate, c("train", "CV"))
+  } else {
+    calcestimates <- estimate
+  }
+  ## Get the needed validation statistics:
+  cl <- match.call(expand.dots = FALSE)
+  cl$estimate <- calcestimates        # update estimate argument
+  cl[[1]] <- as.name("mvrValstatsV")
+  valstats <- eval(cl, parent.frame())
+  
+  ## Calculate the MSEPs:
+  MSEP <- valstats$SSE / valstats$nobj
+  if (adjCV) {
+    if(!is.null(object$shrink)){
+      ## Calculate the adjusted CV
+      MSEP["adjCV",,,] <- MSEP["CV",,,]
+      if (intercept) {
+        MSEP["adjCV",,-1,] <- MSEP["adjCV",,-1,] + MSEP["train",,-1,] -
+          object$validation$adj[,ncomp,]
+      } else {
+        MSEP["adjCV",,,] <- MSEP["adjCV",,,] + MSEP["train",,,] -
+          object$validation$adj[,ncomp,]
+      }
+    } else {
+      ## Calculate the adjusted CV
+      MSEP["adjCV",,] <- MSEP["CV",,]
+      if (intercept) {
+        MSEP["adjCV",,-1] <- MSEP["adjCV",,-1] + MSEP["train",,-1] -
+          object$validation$adj[,ncomp]
+      } else {
+        MSEP["adjCV",,] <- MSEP["adjCV",,] + MSEP["train",,] -
+          object$validation$adj[,ncomp]
+      }
+    }
+    ## Remove any specially added estimates (this also adds back any
+    ## duplicate elements):
+    if(!is.null(object$shrink)){
+      MSEP <- MSEP[estimate,,,, drop=FALSE]
+    } else {
+      MSEP <- MSEP[estimate,,, drop=FALSE]
+    }
+  }
+  
+  return(structure(list(val = MSEP, type = "MSEP", comps = valstats$comps,
+                        cumulative = valstats$cumulative, call = match.call()),
+                   class = "mvrVal"))
+}
+
+# RMSEP: A wrapper around MSEP to calculate RMSEPs
+# RMSEP <- function(object, ...) UseMethod("RMSEP")
+#' @export
+RMSEP.mvrV <- function(object, ...) {
+  cl <- match.call()
+  cl[[1]] <- as.name("MSEP")
+  z <- eval(cl, parent.frame())
+  z$val <- sqrt(z$val)
+  z$type <- "RMSEP"
+  z$call[[1]] <- as.name("RMSEP")
+  z
+}
+
+## Print method for mvrVal objects:
+#' @export
+print.mvrVal <- function(x, digits = 4, print.gap = 2, ...) {
+  nresp <- dim(x$val)[2]
+  yvarnames <- dimnames(x$val)[[2]]
+  names(dimnames(x$val)) <- NULL
+  for (i in 1:nresp) {
+    if (nresp > 1) cat("\nResponse:", yvarnames[i], "\n")
+    if(length(dim(x$val)) == 4){
+      print(x$val[,i,,], digits = digits, print.gap = print.gap, ...)
+    } else {
+      print(x$val[,i,], digits = digits, print.gap = print.gap, ...)
+    }
+  }
+  invisible(x)
+}
