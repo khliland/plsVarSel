@@ -25,8 +25,7 @@ of minimum error and minimum variable set.
 }
 \description{
 Variable selection based on the T^2 statistic. A side effect
-of running the selection is printing of tables and production of plots,
-as the T^2 calculations done by \code{\link[MSQC]{mult.chart}}.
+of running the selection is printing of tables and production of plots.
 }
 \examples{
 data(gasoline, package = "pls")
@@ -41,6 +40,6 @@ if(interactive()){
 }
 }
 \references{
-Tahir Mehmood, Hotelling T2 based variable selection in partial 
+Tahir Mehmood, Hotelling T^2 based variable selection in partial 
 least squares regression, Chemometrics and Intelligent Laboratory Systems 154 (2016), pp 23-28
 }

@@ -21,7 +21,7 @@ myImagePlot(matrix(1:12,3,4), 'A header')
 
 }
 \references{
-T. Mehmood, K.H. Liland, L. Snipen, S. S?b?, A review of variable selection 
+T. Mehmood, K.H. Liland, L. Snipen, S. Sæbø, A review of variable selection 
 methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 118 (2012) 62-69.
 }
@@ -33,5 +33,5 @@ methods in Partial Least Squares Regression, Chemometrics and Intelligent Labora
 \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
 \author{
-Tahir Mehmood, Kristian Hovde Liland, Solve S?b?.
+Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
 }

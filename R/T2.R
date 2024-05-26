@@ -1,8 +1,7 @@
 #' Hotelling's T^2 based variable selection in PLS -- T^2-PLS)
 #'
 #' @description Variable selection based on the T^2 statistic. A side effect
-#' of running the selection is printing of tables and production of plots,
-#' as the T^2 calculations done by \code{\link[MSQC]{mult.chart}}.
+#' of running the selection is printing of tables and production of plots.
 #' 
 #' @param ytr Vector of responses for model training.
 #' @param Xtr Matrix of predictors for model training.
@@ -14,7 +13,7 @@
 #' @return Parameters and variables corresponding to variable selections
 #' of minimum error and minimum variable set.
 #' 
-#' @references Tahir Mehmood, Hotelling T2 based variable selection in partial 
+#' @references Tahir Mehmood, Hotelling T^2 based variable selection in partial 
 #' least squares regression, Chemometrics and Intelligent Laboratory Systems 154 (2016), pp 23-28
 #'
 #' @examples

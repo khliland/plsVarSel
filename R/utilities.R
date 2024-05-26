@@ -14,9 +14,9 @@
 #'  
 #' @return Returns a list of predictor and response data for training and testing.
 #'
-#' @author Tahir Mehmood, Kristian Hovde Liland, Solve S?b?.
+#' @author Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
 #'
-#' @references T. Mehmood, K.H. Liland, L. Snipen, S. S?b?, A review of variable selection 
+#' @references T. Mehmood, K.H. Liland, L. Snipen, S. Sæbø, A review of variable selection 
 #' methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 #' 118 (2012) 62-69.
 #' T. Mehmood, S. Sæbø, K.H. Liland, Comparison of variable selection methods in partial least
@@ -70,9 +70,9 @@ simulate_data <- function (dims, n1=150, n2=50){
 #' @param main header text for the plot.
 #' @param ... additional arguments (not implemented).
 #'  
-#' @author Tahir Mehmood, Kristian Hovde Liland, Solve S?b?.
+#' @author Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
 #'
-#' @references T. Mehmood, K.H. Liland, L. Snipen, S. S?b?, A review of variable selection 
+#' @references T. Mehmood, K.H. Liland, L. Snipen, S. Sæbø, A review of variable selection 
 #' methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 #' 118 (2012) 62-69.
 #'

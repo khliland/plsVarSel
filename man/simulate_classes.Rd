@@ -35,7 +35,7 @@ str(simulate_classes(5,4,4))
 
 }
 \references{
-T. Mehmood, K.H. Liland, L. Snipen, S. S?b?, A review of variable selection 
+T. Mehmood, K.H. Liland, L. Snipen, S. Sæbø, A review of variable selection 
 methods in Partial Least Squares Regression, Chemometrics and Intelligent Laboratory Systems
 118 (2012) 62-69.
 T. Mehmood, S. Sæbø, K.H. Liland, Comparison of variable selection methods in partial least
@@ -49,5 +49,5 @@ squares regression, Journal of Chemometrics 34 (2020) e3226.
 \code{\link{lda_from_pls}}, \code{\link{lda_from_pls_cv}}, \code{\link{setDA}}.
 }
 \author{
-Tahir Mehmood, Kristian Hovde Liland, Solve S?b?.
+Tahir Mehmood, Kristian Hovde Liland, Solve Sæbø.
 }
