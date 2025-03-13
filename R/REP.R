@@ -13,6 +13,8 @@
 #' @details A stability based variable selection procedure is adopted, where the
 #' samples have been split randomly into a predefined number of training and test sets.
 #' For each split, g, the following stepwise procedure is adopted to select the variables.
+#' This implementation does not follow the original publication exactly, but
+#' it opens for both regression and classification.
 #'  
 #' @return Returns a vector of variable numbers corresponding to the model 
 #' having lowest prediction error.

@@ -7,7 +7,7 @@
 stpls(..., method = c("stpls", "model.frame"))
 }
 \arguments{
-\item{...}{arguments passed on to \code{mvrV}).}
+\item{...}{arguments for the underlying \code{stpls.fit} (see Details) and argumetns passed on to \code{mvrV}).}
 
 \item{method}{choice between the default \code{stpls} and alternative \code{model.frame}.}
 }
@@ -21,7 +21,10 @@ ideas from the nearest shrunken centroid method.
 \details{
 The ST-PLS approach is more or less identical to the Sparse-PLS presented
 independently by Lè Cao et al. This implementation is an expansion of code from the
-pls package.
+pls package. Arguments for \code{stpls.fit} include \code{ncomp} and \code{shrink}, where
+the forme sets then number of components and the latter is the shrinkage parameter
+indicating how large proportion of the maximum absolute value of the loadings that
+should be subtracted from the loadings in the nearest shrunken centroid method.
 }
 \examples{
 data(yarn, package = "pls")

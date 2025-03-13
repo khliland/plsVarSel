@@ -58,8 +58,13 @@ T2_pls <- function(ytr, Xtr, yts, Xts, ncomp = 10, alpha = c(0.2, 0.15, 0.1, 0.0
     R[k,]  <- c(opt.MSE.T2, opt.MSE.ts.T2, opt.comp.T2, length(ind.T2), alpha[k])
     V[[k]] <- ind.T2
   }
+  colnames(R) <- c("RMSE train", "RMSE test", "ncomp", "nvar", "alpha")
   ind.p <- which.min(R[,2])
   ind.v <- which.min(R[,4])  
-  res <- list(mR=R[c(ind.p, ind.v),], mv=V[c(ind.p, ind.v)])
+  mR <- R[c(ind.p, ind.v),]
+  rownames(mR) <- c("min. error","min. set")
+  mv <- V[c(ind.p, ind.v)]
+  names(mv) <- c("min. error","min. set")
+  res <- list(mR=mR, mv=mv)
   res
 }

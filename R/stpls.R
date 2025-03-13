@@ -3,12 +3,15 @@
 #' @description A soft-thresholding step in PLS algorithm (ST-PLS) based on
 #' ideas from the nearest shrunken centroid method.
 #'
-#' @param ... arguments passed on to \code{mvrV}).
+#' @param ... arguments for the underlying \code{stpls.fit} (see Details) and argumetns passed on to \code{mvrV}).
 #' @param method choice between the default \code{stpls} and alternative \code{model.frame}.
 #'
 #' @details The ST-PLS approach is more or less identical to the Sparse-PLS presented
 #' independently by Lè Cao et al. This implementation is an expansion of code from the
-#' pls package.
+#' pls package. Arguments for \code{stpls.fit} include \code{ncomp} and \code{shrink}, where
+#' the forme sets then number of components and the latter is the shrinkage parameter
+#' indicating how large proportion of the maximum absolute value of the loadings that
+#' should be subtracted from the loadings in the nearest shrunken centroid method.
 #'  
 #' @return Returns an object of class mvrV, simliar to to mvr object of the pls package.
 #'
