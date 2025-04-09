@@ -41,7 +41,7 @@ mRMR(pls.object, nsel, X)
 \item{nsel}{number of variables to select.}
 }
 \value{
-A vector having the same lenght as the number of variables in the associated
+A vector having the same length as the number of variables in the associated
 PLS model. High values are associated with high importance, explained variance or
 relevance to the model.
 

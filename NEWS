@@ -2,6 +2,10 @@ NEWS file for package plsVarSel
 Interfaces and methods for variable selection in Partial Least Squares.
 Kristian Hovde Liland, Tahir Mehmood, and Solve Sæbø, Norway
 
+##### Version 0.9.13
+Date: 09 April 2025
+>> Adjustments of T2_pls output and stpls/REP documentation.
+
 ##### Version 0.9.12
 Date: 22 May 2024
 >> Removed MSQC from documentation.
