@@ -17,7 +17,7 @@
 #' @param alpha_mc quantile significance for automatic selection of variables in \code{sMC}.
 #' @param nsel number of variables to select.
 #'
-#' @return A vector having the same lenght as the number of variables in the associated
+#' @return A vector having the same length as the number of variables in the associated
 #' PLS model. High values are associated with high importance, explained variance or
 #' relevance to the model.
 #' 
