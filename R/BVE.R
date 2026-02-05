@@ -117,8 +117,10 @@ bve_pls <- function( y, X, ncomp=10, ratio=0.75, VIP.threshold=1 ){
     Zcal  <- Zcal[,VIP.index]
     Ztest <- Ztest[,VIP.index]
     indd  <- unique( which(apply(Zcal, 2, var)==0),which(apply(Ztest, 2, var)==0))
-    Zcal  <- Zcal[, -indd] 
-    Ztest <- Ztest[, -indd] 
+    if (length(indd) > 0) {
+      Zcal  <- Zcal[, -indd, drop = FALSE]
+      Ztest <- Ztest[, -indd, drop = FALSE]
+    }
     if( ncol(Zcal) <= ncomp+1 ){  # terminates if less than 5 variables remain
       terminated <- TRUE
     } 
