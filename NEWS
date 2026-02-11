@@ -4,10 +4,10 @@ Kristian Hovde Liland, Tahir Mehmood, and Solve Sæbø, Norway
 
 ##### Version 0.10.0
 Date: 12 February 2026
->> Corrected errors in bve_pls() and rep_pls(), effectively inverting VIP selections and terminating early.
+>> Added PVS() and PVR() - Principal Variable Selection/Regression
+>> Corrected errors in bve_pls() (thanks to @tien-endotchang for reporting) and rep_pls(), effectively inverting VIP selections and terminating early. Also corrected accumulation of (de)-selected variables to compensate for constant X columns.
 >> Corrected errors in truncation() regarding handling of object weighting.
 >> General code cleaning without functional effect.
->> Added PVS() and PVR() - Principal Variable Selection/Regression
 
 ##### Version 0.9.13
 Date: 09 April 2025

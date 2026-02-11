@@ -112,10 +112,12 @@ bve_pls <- function( y, X, ncomp=10, ratio=0.75, VIP.threshold=1 ){
       VIP.index <- sort(Vip,decreasing=FALSE, index.return = T)$ix [1:ncomp]
     }
     is.selected[variables[VIP.index]] <- F
-    variables     <- which( is.selected ) 
+    variables     <- which( is.selected )
+    # Thanks to @tien-endotchang for reporting sign error.
     Zcal  <- Zcal[,-VIP.index, drop=FALSE]
     Ztest <- Ztest[,-VIP.index, drop=FALSE]
     indd  <- unique( which(apply(Zcal, 2, var)==0),which(apply(Ztest, 2, var)==0))
+    # Thanks to @tien-endotchang for reporting possible 0-length indd error.
     if(length(indd)>0){
       is.selected[variables[indd]] <- F
       variables <- which(is.selected)
