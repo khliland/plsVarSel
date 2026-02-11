@@ -67,7 +67,6 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
     modeltype <- "classification"
     y.orig <- as.numeric(y)
     y      <- model.matrix(~ y-1)
-    tb     <- as.numeric(names(table(y)))
     min.left <- max(min.left, dim(y)[2])
   }
 
@@ -97,7 +96,7 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
   }
   rems <- integer(nrep)
   left <- p-nfix
-  for(i in 1:nrep){
+  for(i in seq_len(nrep)){
     rems[i] <- left
     left <- left - max(1, round(prop * left))
   }
@@ -112,7 +111,7 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
       validation <- validation[1]
     }
     segs   <- list()
-    for(i in 1:rep.seg)
+    for(i in seq_len(rep.seg))
       segs <- c(segs, cvsegments(n, segments, ...))
   } else {
     segs <- segments
@@ -127,7 +126,7 @@ shaving <- function(y, X, ncomp = 10, method = c("SR", "VIP", "sMC", "LW", "RC")
   
   # Shaving loop
   pb <- progress_bar$new(total = nrep, format = "  [:bar] :percent ")
-  for(i in 1:nrep){
+  for(i in seq_len(nrep)){
     nvar[i] <- length(left.vec)
     variables[[i]] <- left.vec
 
@@ -246,7 +245,7 @@ plot.shaved <- function(x, y, what = c('error', 'spectra'), index = "min", log =
       }
       X.NA <- X
       X.NA[, -variables[[index]]] <- NA
-      x <- 1:ncol(X)
+      x <- seq_len(ncol(X))
       x.NA <- x
       x.NA[-variables[[index]]] <- NA
       xaxt <- par("xaxt")

@@ -88,7 +88,7 @@ monitor <- function(obj) {
     bestSolution <- obj$population[filter,];
   }
   outputBest <- paste(obj$iter, " #selected=", sum(bestSolution)," Best (Error=", minEval, "): ", sep="")
-  for (var in 1:length(bestSolution)) {
+  for (var in seq_along(bestSolution)) {
     outputBest <- paste(outputBest, bestSolution[var], " ", sep="")
   }
   outputBest <- paste(outputBest, "\n", sep="")

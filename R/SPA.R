@@ -54,7 +54,6 @@ spa_pls<- function(y, X, ncomp=10, N=3, ratio=0.8, Qv=10, SPA.threshold=0.05){
     modeltype <- "classification"
     y.orig <- as.numeric(y)
     y      <- model.matrix(~ y-1)
-    tb     <- names(table(y.orig))
     # tb<-as.numeric(names(table(y)))
   } else {
     y <- as.matrix(y)
@@ -68,11 +67,9 @@ spa_pls<- function(y, X, ncomp=10, N=3, ratio=0.8, Qv=10, SPA.threshold=0.05){
   Qs <- floor(Mx*ratio)
   error0   <- matrix(0,  N,1)
   error1   <- matrix(NA, N,Nx)
-  interfer <- matrix(0,  1,Nx)
-  nLV <- matrix(0, N,1)
   ntest <- Mx-Qs
   
-  for (i in 1:N){
+  for (i in seq_len(N)){
     ns    <- sample(Mx)
     calk  <- ns[1:Qs]
     testk <- ns[(Qs+1):Mx]
@@ -110,7 +107,7 @@ spa_pls<- function(y, X, ncomp=10, N=3, ratio=0.8, Qv=10, SPA.threshold=0.05){
     error_temp <- matrix(NA,1,Nx)
     
     # Make predictions on the permutated sub-datset.
-    for (j in 1:Qv){
+    for (j in seq_len(Qv)){
       rn     <- sample(ntest)
       Xtestr <- Xtest
       vi     <- Xtest[,j]
@@ -130,7 +127,7 @@ spa_pls<- function(y, X, ncomp=10, N=3, ratio=0.8, Qv=10, SPA.threshold=0.05){
   p     <- matrix(0, 1,Nx)
   DMEAN <- matrix(0, Nx,1)
   DSD   <- matrix(0, Nx,1)
-  for (ii in 1:Nx){
+  for (ii in seq_len(Nx)){
     k <- which(!is.na(error1[,ii]))
     if(length(k)!=0){
       errori <- error1[,ii]

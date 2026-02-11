@@ -153,7 +153,7 @@ trunc_fit <- function(X, Y, ncomp, Y.add = NULL, stripped = FALSE,
     mm <- apply(abs(X),2,sum)
     r <- which(mm < pls.options()$X.tol)
     if(length(r)>0){
-      for(i in 1:length(r)){
+      for(i in seq_along(r)){
         if(sum(smallNorm==r[i]) == 0){
           ## Add new short small to list
           smallNorm[length(smallNorm)+1] <- r[i]
@@ -240,6 +240,7 @@ RcalP <- function(X, Y, Yprim, weights, lower, upper, trunc.pow) {
   
   ## Computation of the best vector of loadings
   lw <- lw_bestpar(X, S, C, sng, Yprim, weights, lower, upper, trunc.pow)
+  lw
 }
 
 
@@ -483,7 +484,7 @@ Lenth <- function(x, df=0, conf=0.95, weight=0, symmetric=FALSE){
   InLiers[max_out] <- FALSE # At least one point outside
   
   if(weight > 0){ # Weights from normal distribution
-    xTr <- x(x<(med+offsets[2]) & x>(med-offsets[1])) # Trim asymmetrically around the median
+    xTr <- x[x<(med+offsets[2]) & x>(med-offsets[1])] # Trim asymmetrically around the median
     std <- sd(xTr)
     wWeights <- 1-2*abs(pt((x-med)/std,df)-0.5)
     #         wWeights = pt((x-med)./sd,df);
@@ -582,7 +583,7 @@ quant <- function(x, df=0, quant=0.95, weight=0, symmetric=FALSE){
   InLiers[max_out] <- FALSE # At least one point outside
   
   if(weight > 0){ # Weights from normal distribution
-    xTr <- x(x<(med+offsets[2]) & x>(med-offsets[1])) # Trim asymmetrically around the median
+    xTr <- x[x<(med+offsets[2]) & x>(med-offsets[1])] # Trim asymmetrically around the median
     std <- sd(xTr)
     wWeights <- 1-2*abs(pt((x-med)/std,df)-0.5)
     #         wWeights = pt((x-med)./sd,df);

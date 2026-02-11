@@ -50,7 +50,7 @@ WVC_pls <- function(y, X, ncomp, normalize=FALSE, threshold=NULL){
   S <- matrix(NA, nr, ncomp)
   Q <- EE <- SS <- matrix(NA, nresp, ncomp)
   
-  for(a in 1:ncomp){
+  for(a in seq_len(ncomp)){
     usv <- svd(crossprod(X,y), 1,0)
     w  <- usv$u
     s  <- X%*%w
@@ -60,7 +60,7 @@ WVC_pls <- function(y, X, ncomp, normalize=FALSE, threshold=NULL){
     EE[a] <- t(X%*%w)%*%y%*%q / (t(X%*%w)%*%X%*%w ) # alpha (Eq. 19)
     SS[a] <- t(X%*%w)%*%y%*%q                       # s (Eq. 14)
     W[,a] <- w # loading weights
-    for(j in 1:nrow(W)){
+    for(j in seq_len(nrow(W))){
       if(a==1){
         WVC[j,a] <- sqrt(ncol(X) *EE[1:a]%*% c(W[j,1:a])^2 %*%t(SS[1:a])/ # m * alpha *w^2 * s
                            c(EE[1:a]%*%t(SS[1:a])))                       # alpha * s (Eq. 16)
@@ -88,10 +88,10 @@ WVC_pls <- function(y, X, ncomp, normalize=FALSE, threshold=NULL){
     mat <- crossprod(P[,1:a], W[,1:a])
     id  <- subset(as.data.frame(which(cor(mat) > 0.9999, arr.ind=TRUE)), row < col)
     if(nrow(id) >0) mat <- mat[,-unique(id$row)]
-    for(j in 1:nresp){
+    for(j in seq_len(nresp)){
       BB <- W[,1:a]%*% solve(mat)%*%Q[j, 1:a]
       if(dim(id)[1] >0) {
-        for(i in 1:length(id)){
+        for(i in seq_along(id)){
           BB <- append(BB, 0, after = id[i])
         }
       }
@@ -101,7 +101,7 @@ WVC_pls <- function(y, X, ncomp, normalize=FALSE, threshold=NULL){
   }
   
   if(is.null(colnames(X))){
-    Xname <- as.character(1:nc)
+    Xname <- as.character(seq_len(nc))
   } else {
     Xname <- colnames(X)
   }

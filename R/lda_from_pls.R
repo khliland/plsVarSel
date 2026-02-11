@@ -34,10 +34,10 @@ lda_from_pls <- function(model, grouping, newdata, ncomp){
     labels  <- names(table(grouping))
     predVal <- predict(model, newdata = newdata, ncomp = 1:ncomp)
     class   <- apply(predVal,c(1,3),which.max)
-    for(i in 1:ncol(class)){
+    for(i in seq_len(ncol(class))){
       class[[i]]   <- labels[class[[i]]]
     }
-    colnames(class) <- paste("Comp.", 1:ncomp, sep="")
+    colnames(class) <- paste("Comp.", seq_len(ncomp), sep="")
     return(class)
     
   } else { # LDA or QDA
@@ -50,7 +50,7 @@ lda_from_pls <- function(model, grouping, newdata, ncomp){
     class <- matrix(0, N[1],ncomp)
     
     # Create ncomp lda models and predict classes
-    for(i in 1:ncomp){
+    for(i in seq_len(ncomp)){
       if(getplsEnv("LQ") == "lda"){
         ldai <- lda(scoresCal[, 1:i, drop = FALSE], grouping, tol = 1.0e-10)
       }
@@ -59,7 +59,7 @@ lda_from_pls <- function(model, grouping, newdata, ncomp){
       }
       class[, i] <- predict(ldai, scoresVal[, 1:i, drop = FALSE])$class
     }
-    colnames(class) <- paste("Comp.", 1:ncomp, sep="")
+    colnames(class) <- paste("Comp.", seq_len(ncomp), sep="")
     return(class)
   }
 }
@@ -110,7 +110,7 @@ lda_from_pls_cv <- function(model, X, y, ncomp, Y.add = NULL){
     data     <- data.frame(X = I(X), y = y, dummy = I(dummy), Y.add=I(Y.add))
     names(data)[4] <- deparse(substitute(Y.add))
   }
-  for(i in 1:length(segments)){
+  for(i in seq_along(segments)){
     # Update model with new data
     model_i <- update(model, subset = NULL, 
                       formula = dummy~X, 
@@ -123,6 +123,6 @@ lda_from_pls_cv <- function(model, X, y, ncomp, Y.add = NULL){
       comp <- min(compp,ncomp)
     classes[segments[[i]],1:comp] <- lda_from_pls(model_i, y[-segments[[i]]], data[segments[[i]],, drop = FALSE], comp)
   }
-  colnames(classes) <- paste("Comp.", 1:ncomp, sep="")
+  colnames(classes) <- paste("Comp.", seq_len(ncomp), sep="")
   classes
 }

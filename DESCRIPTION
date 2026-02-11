@@ -2,8 +2,8 @@ Encoding: UTF-8
 Package: plsVarSel
 Type: Package
 Title: Variable Selection in Partial Least Squares
-Version: 0.9.13
-Date: 2025-04-09
+Version: 0.10.0
+Date: 2026-02-12
 Authors@R: 
     c(person(given = "Kristian Hovde",
              family = "Liland",
@@ -37,4 +37,4 @@ Imports:
     praznik
 Suggests:
     Rmpi
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

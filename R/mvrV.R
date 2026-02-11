@@ -50,7 +50,7 @@ mvrV <- function(formula, ncomp, Y.add, data, subset, na.action, shrink,
   Y <- model.response(mf, "numeric")
   if (is.matrix(Y)) {
     if (is.null(colnames(Y)))
-      colnames(Y) <- paste("Y", 1:dim(Y)[2], sep = "")
+      colnames(Y) <- paste("Y", seq_len(dim(Y)[2]), sep = "")
   } else {
     Y <- as.matrix(Y)
     colnames(Y) <- deparse(formula[[2]])
@@ -98,7 +98,7 @@ mvrV <- function(formula, ncomp, Y.add, data, subset, na.action, shrink,
              val <- mvrCvV(X, Y, ncomp, Y.add = Y.add, method = method, scale = sdscale, shrink = shrink, ...)
            },
            LOO = {
-             segments <- as.list(1:nobj)
+             segments <- as.list(seq_len(nobj))
              attr(segments, "type") <- "leave-one-out"
              val <- mvrCvV(X, Y, ncomp, Y.add = Y.add, method = method, scale = sdscale, shrink = shrink,
                           segments = segments, ...)
@@ -242,8 +242,8 @@ mvrCvV <- function(X, Y, ncomp, Y.add = NULL, weights = NULL, shrink,
     ## Predict test data:
     if(!is.logical(shrink)){ # ST-PLS shrinkage
       pred <- array(dim = c(nobj, nresp, ncomp, nshrink))
-      for(aa in 1:nshrink){
-        for (a in 1:ncomp){ 
+      for(aa in seq_len(nshrink)){
+        for (a in seq_len(ncomp)){ 
           pred[, , a, aa] <- sweep(Xtest %*% fit$coefficients[, , a, aa], 2, fit$Ymeans, "+")
         }
       }    
@@ -251,7 +251,7 @@ mvrCvV <- function(X, Y, ncomp, Y.add = NULL, weights = NULL, shrink,
     } else { # No shrinkage
       pred <- array(0, dim = c(nobj, nresp, ncomp))
       Ymeansrep <- rep(fit$Ymeans, each = nobj)
-      for (a in 1:ncomp)
+      for (a in seq_len(ncomp))
         pred[,,a] <- Xtest %*% fit$coefficients[,,a] + Ymeansrep
       cvPred <- pred[seg,,, drop=FALSE]
     }
@@ -295,7 +295,7 @@ mvrCvV <- function(X, Y, ncomp, Y.add = NULL, weights = NULL, shrink,
     objnames <- dnX[[1]]
     if (is.null(objnames)) objnames <- dnY[[1]]
     respnames <- dnY[[2]]
-    nCompnames <- paste(1:ncomp, "comps")
+    nCompnames <- paste(seq_len(ncomp), "comps")
     names(PRESS0) <- respnames
     dimnames(adj) <- dimnames(PRESS) <-
       list(respnames, nCompnames, shrinknames)
@@ -327,7 +327,7 @@ mvrCvV <- function(X, Y, ncomp, Y.add = NULL, weights = NULL, shrink,
     objnames <- dnX[[1]]
     if (is.null(objnames)) objnames <- dnY[[1]]
     respnames <- dnY[[2]]
-    nCompnames <- paste(1:ncomp, "comps")
+    nCompnames <- paste(seq_len(ncomp), "comps")
     names(PRESS0) <- respnames
     dimnames(adj) <- dimnames(PRESS) <-
       list(respnames, nCompnames)
@@ -782,7 +782,7 @@ print.mvrVal <- function(x, digits = 4, print.gap = 2, ...) {
   nresp <- dim(x$val)[2]
   yvarnames <- dimnames(x$val)[[2]]
   names(dimnames(x$val)) <- NULL
-  for (i in 1:nresp) {
+  for (i in seq_len(nresp)) {
     if (nresp > 1) cat("\nResponse:", yvarnames[i], "\n")
     if(length(dim(x$val)) == 4){
       print(x$val[,i,,], digits = digits, print.gap = print.gap, ...)

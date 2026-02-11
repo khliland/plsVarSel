@@ -9,7 +9,7 @@
 #' @param ratio the proportion of the samples to use for calibration (default = 0.75).
 #' @param VIP.threshold thresholding to remove non-important variables (default = 1).
 #'
-#' @details Variables are first sorted with respect to some importancemeasure, 
+#' @details Variables are first sorted with respect to some importance measure, 
 #' and usually one of the filter measures described above are used. Secondly, a 
 #' threshold is used to eliminate a subset of the least informative variables. Then
 #' a model is fitted again to the remaining variables and performance is measured. 
@@ -113,12 +113,16 @@ bve_pls <- function( y, X, ncomp=10, ratio=0.75, VIP.threshold=1 ){
     }
     is.selected[variables[VIP.index]] <- F
     variables     <- which( is.selected ) 
-    Variable.list <- c(Variable.list, list(variables)) 
-    Zcal  <- Zcal[,VIP.index]
-    Ztest <- Ztest[,VIP.index]
+    Zcal  <- Zcal[,-VIP.index, drop=FALSE]
+    Ztest <- Ztest[,-VIP.index, drop=FALSE]
     indd  <- unique( which(apply(Zcal, 2, var)==0),which(apply(Ztest, 2, var)==0))
-    Zcal  <- Zcal[, -indd] 
-    Ztest <- Ztest[, -indd] 
+    if(length(indd)>0){
+      is.selected[variables[indd]] <- F
+      variables <- which(is.selected)
+      Zcal  <- Zcal[, -indd] 
+      Ztest <- Ztest[, -indd]
+    }
+    Variable.list <- c(Variable.list, list(variables)) 
     if( ncol(Zcal) <= ncomp+1 ){  # terminates if less than 5 variables remain
       terminated <- TRUE
     } 

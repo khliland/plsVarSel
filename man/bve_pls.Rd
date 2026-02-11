@@ -26,7 +26,7 @@ A backward variable elimination procedure for elimination
 of non informative variables.
 }
 \details{
-Variables are first sorted with respect to some importancemeasure, 
+Variables are first sorted with respect to some importance measure, 
 and usually one of the filter measures described above are used. Secondly, a 
 threshold is used to eliminate a subset of the least informative variables. Then
 a model is fitted again to the remaining variables and performance is measured. 

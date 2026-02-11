@@ -53,7 +53,7 @@ simulate_data <- function (dims, n1=150, n2=50){
   n <- n1+n2
   Sigma <- createSmatrix(dims=dims,c(0.5,0.5,0.5,0.2,0,0,0,0,0,0),c(0.35,-0.3,0.25,0.2,0,0,0,0,0,0),1,1)
   Data  <- rmvnorm(n, mean = rep(0, nrow(Sigma)), sigma = Sigma, method=c("chol"))
-  Beta  <- solve(Sigma[-dim(Sigma)[1],-dim(Sigma)[1]])%*%Sigma[dim(Sigma)[1],-dim(Sigma)[1]]
+  # Beta  <- solve(Sigma[-dim(Sigma)[1],-dim(Sigma)[1]])%*%Sigma[dim(Sigma)[1],-dim(Sigma)[1]]
   X <- Data[,-dim(Sigma)[1]]
   y <- Data[,dim(Sigma)[1]]
   Xtrain <- X[1:n1,];    Ytrain <- y[1:n1]
@@ -112,10 +112,10 @@ myImagePlot <- function(x,main, ...){
   }
   # check for null values
   if( is.null(xLabels) ){
-    xLabels <- c(1:ncol(x))
+    xLabels <- seq_len(ncol(x))
   }
   if( is.null(yLabels) ){
-    yLabels <- c(1:nrow(x))
+    yLabels <- seq_len(nrow(x))
   }
   
   layout(matrix(data=c(1,2), nrow=1, ncol=2), widths=c(4,1), heights=c(1,1))
@@ -127,19 +127,19 @@ myImagePlot <- function(x,main, ...){
   ColorLevels <- seq(min, max, length=length(ColorRamp))
   
   # Reverse Y axis
-  reverse <- nrow(x) : 1
+  reverse <- rev(seq_len(nrow(x)))
   yLabels <- yLabels[reverse]
   x <- x[reverse,]
   
   # Data Map
   par(mar = c(3,7,2.5,2))
-  image(1:length(xLabels), 1:length(yLabels), t(x), col=ColorRamp, xlab="",
+  image(seq_along(xLabels), seq_along(yLabels), t(x), col=ColorRamp, xlab="",
         ylab="", axes=FALSE, zlim=c(min,max), main=main)
   if( !is.null(title) ){
     title(main=title)
   }
-  axis(BELOW<-1, at=1:length(xLabels), labels=xLabels, cex.axis=0.7)
-  axis(LEFT <-2, at=1:length(yLabels), labels=yLabels, las= HORIZONTAL<-1,
+  axis(1, at=seq_along(xLabels), labels=xLabels, cex.axis=0.7)
+  axis(2, at=seq_along(yLabels), labels=yLabels, las=1,
        cex.axis=0.7)
   
   # Color Scale
@@ -215,7 +215,7 @@ createSmatrix <- function(dims, rhos, xycors, xvar=1, yvar=1){
   covvek <- rep(xycors,times=dims)*sqrt(xvar)*sqrt(yvar)
   
   blocklist <- list()
-  for(i in 1:length(dims)){
+  for(i in seq_along(dims)){
     blocklist[[i]] <- .makeSmatrix(dims[i],rhos[i])
   }
   
@@ -313,24 +313,24 @@ t2_calc <- function(x, type, alpha, main){
     cat("The following(s) point(s) fall outside of the control limits")
     t3 <- which(t2 > ucl)
     print(t3)
-    for (ii in 1:length(t3)) {
+    for (ii in seq_along(t3)) {
       v = 1
       k = 0
-      for (i in 1:p) {
+      for (i in seq_len(p)) {
         k <- k + factorial(p)/(factorial(i) * factorial(p - 
                                                           i))
       }
       q <- matrix(0, k, p + 3)
-      for (i in 1:p) {
+      for (i in seq_len(p)) {
         a <- t(combn(p, i))
-        for (l in 1:nrow(a)) {
-          for (j in 1:ncol(a)) {
+        for (l in seq_len(nrow(a))) {
+          for (j in seq_len(ncol(a))) {
             q[v, j + 3] <- a[l, j]
           }
           v = v + 1
         }
       }
-      for (i in 1:nrow(q)) {
+      for (i in seq_len(nrow(q))) {
         b <- subset(q[i, 4:ncol(q)], q[i, 4:ncol(q)] > 
                       0)
         di <- length(b)
@@ -395,17 +395,17 @@ covar <- function (x, stat, method, ...)
     if (method == "sw") {
       B <- matrix(0, p, p)
       w <- sweep(x, 2, (apply(x, 2, mean)))
-      for (i in 1:m) {
+      for (i in seq_len(m)) {
         B <- B + w[i, , ] %*% t(w[i, , ])
       }
-      S <- s1 <- B/(m - 1)
+      S <- B/(m - 1)
     }
     if (method == "hm") {
       V <- matrix(0, m - 1, p)
-      for (i in 1:m - 1) {
+      for (i in seq_len(m - 1)) {
         V[i, ] <- x[i + 1, , ] - x[i, , ]
       }
-      S <- s2 <- 0.5 * t(V) %*% V/(m - 1)
+      S <- 0.5 * t(V) %*% V/(m - 1)
     }
     return(S)
   }

@@ -37,7 +37,7 @@ T2_pls <- function(ytr, Xtr, yts, Xts, ncomp = 10, alpha = c(0.2, 0.15, 0.1, 0.0
   pls.lwd  <- data.frame(opt.fit$loading.weights[,1:opt.comp])
   R <- matrix(NA, length(alpha), 5)
   V <- vector('list', length(alpha))
-  for(k in 1:length(alpha)){
+  for(k in seq_along(alpha)){
     T2.chart <- t2_calc(pls.lwd, type = "t2", alpha = alpha[k], main = "T2 chart for PLS loadings")
     # Marked for deletion from CRAN
     #T2.chart <- mult.chart(pls.lwd, type = "t2", alpha = alpha[k], main = "T2 chart for PLS loadings")
@@ -48,7 +48,6 @@ T2_pls <- function(ytr, Xtr, yts, Xts, ncomp = 10, alpha = c(0.2, 0.15, 0.1, 0.0
     Xtr.T2 <- Xtr[,ind.T2]
     Xts.T2 <- Xts[,ind.T2]
     pls.cv.T2 <- plsr(ytr ~ Xtr.T2, ncomp=min(ncomp, ncol(Xtr.T2)-1), validation = "CV")
-    opt.comp.T2 <- which.min(pls.cv.T2$validation$PRESS)
     opt.comp.T2 <- which.min(pls.cv.T2$validation$PRESS)
     opt.fit.T2  <- plsr(ytr ~ Xtr.T2, opt.comp.T2)
     Yhat.T2 <- opt.fit.T2$fitted.values[,,opt.comp.T2]

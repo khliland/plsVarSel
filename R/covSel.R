@@ -30,7 +30,6 @@ covSel <- function(X, Y, nvar){
     nvar <- min(ncol(X), N-1)}
   T <- matrix(0, N, nvar)
   Q <- matrix(0, nvar, ncol(Y))
-  P <- matrix(0, nvar, ncol(X))
   sel <- integer(nvar)
   for(i in 1:nvar){
     covs <- rowSums(crossprod(X, Y)^2)

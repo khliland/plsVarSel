@@ -46,8 +46,6 @@ mcuve_pls<- function(y,X,ncomp=10, N=3,ratio=0.75, MCUVE.threshold=NA){
     modeltype <- "classification"
     y.orig <- as.numeric(y)
     y      <- model.matrix(~ y-1)
-    tb     <- names(table(y.orig))
-    # tb<-as.numeric(names(table(y)))
   } else {
     y <- as.matrix(y)
   }
@@ -62,7 +60,7 @@ mcuve_pls<- function(y,X,ncomp=10, N=3,ratio=0.75, MCUVE.threshold=NA){
   K  <- floor(Mx*ratio) 
   C  <- matrix(0, N, Nx*2)  
   ncomp <- min(c(dim(X), ncomp))
-  for( i in 1:N){
+  for( i in seq_len(N)){
     temp <- sample(Mx)
     calk <- temp[1:K]      
     Zcal <- Z[calk, ]; ycal <- y[calk,]  
@@ -79,11 +77,11 @@ mcuve_pls<- function(y,X,ncomp=10, N=3,ratio=0.75, MCUVE.threshold=NA){
   SD <- apply(C, 2, sd)  
   RI <- U/SD	
   if(is.na( MCUVE.threshold)) {
-    MCUVE.threshold <- max(abs(RI[-(1:Nx)])) # max.RI
+    MCUVE.threshold <- max(abs(RI[-seq_len(Nx)])) # max.RI
   } 
-  UVE.selection <- which(abs(RI[(1:Nx)]) > MCUVE.threshold)
+  UVE.selection <- which(abs(RI[seq_len(Nx)]) > MCUVE.threshold)
   if(length(UVE.selection)<= (ncomp +1)) {
-    UVE.selection <- sort(abs(RI[(1:Nx)]), decreasing=TRUE, index.return = T)$ix [1:ncomp]
+    UVE.selection <- sort(abs(RI[seq_len(Nx)]), decreasing=TRUE, index.return = T)$ix [1:ncomp]
   }
   return(list(mcuve.selection=UVE.selection))
 }

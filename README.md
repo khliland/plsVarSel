@@ -33,6 +33,7 @@ devtools::install_github("khliland/plsVarSel")
     - Trunction PLS
     - ST-PLS - Soft-Threshold PLS
     - CovSel - Covariance Selection
+    - PVS/PVR - Principal Variable Selection and Regression
 - LDA wrappers for PLS classficiations and cross-validation
 - Shaving - Repeated shaving of variables using filters (experimental)
 - Simulation tools

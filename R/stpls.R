@@ -78,10 +78,10 @@ stpls.fit <- function(X, Y, ncomp, shrink, stripped = FALSE,
   if (!stripped)
     Xtotvar <- sum(globX * globX)
   
-  for(aa in 1:nshrink){
+  for(aa in seq_len(nshrink)){
     X <- globX
     Y <- globY
-    for(a in 1:ncomp) {
+    for(a in seq_len(ncomp)) {
       ## Initial values:
       if (nresp == 1) {               # pls1
         u.a <- Y                    # FIXME: scale?
@@ -145,7 +145,7 @@ stpls.fit <- function(X, Y, ncomp, shrink, stripped = FALSE,
     
   }
   
-  for(aa in 1:nshrink){
+  for(aa in seq_len(nshrink)){
     ## Calculate rotation matrix:
     PW <- crossprod(P[,,aa], W[,,aa])
     ## It is known that P^tW is right bi-diagonal (one response) or upper
@@ -157,7 +157,7 @@ stpls.fit <- function(X, Y, ncomp, shrink, stripped = FALSE,
       R[,,aa] <- W[,,aa] %*% PWinv
       
       ## Calculate regression coefficients:
-      for (a in 1:ncomp) {
+      for (a in seq_len(ncomp)) {
         myR <-  matrix(R[,,aa], nrow = npred, ncol = ncomp)
         mytQ <- matrix(tQ[,,aa], nrow = ncomp, ncol = nresp)
         B[,,a,aa] <- myR[,1:a,drop=FALSE] %*% mytQ[1:a,,drop=FALSE]
@@ -166,7 +166,7 @@ stpls.fit <- function(X, Y, ncomp, shrink, stripped = FALSE,
       PWinv <- backsolve(PW, diag(ncomp))
     }
     R[,,aa]   <- W[,,aa] %*% PWinv
-    for (a in 1:ncomp) {
+    for (a in seq_len(ncomp)) {
       myR  <- matrix( R[,,aa], nrow = npred, ncol = ncomp)
       mytQ <- matrix(tQ[,,aa], nrow = ncomp, ncol = nresp)
       B[,,a,aa] <- myR[,1:a,drop=FALSE] %*% mytQ[1:a,,drop=FALSE]
@@ -184,9 +184,9 @@ stpls.fit <- function(X, Y, ncomp, shrink, stripped = FALSE,
       objnames <- dnY[[1]]
     prednames <- dnX[[2]]
     respnames <- dnY[[2]]
-    compnames <- paste("Comp", 1:ncomp)
+    compnames <- paste("Comp", seq_len(ncomp))
     shrinknames <- paste("Shrink", shrink)
-    nCompnames  <- paste(1:ncomp, "comps")
+    nCompnames  <- paste(seq_len(ncomp), "comps")
     dimnames(TT) <- dimnames(U) <- list(objnames, compnames, shrinknames)
     dimnames(R)  <- dimnames(W) <- dimnames(P) <-
       list(prednames, compnames, shrinknames)

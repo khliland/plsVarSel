@@ -77,7 +77,7 @@ rep_pls <- function( y, X, ncomp=5, ratio=0.75, VIP.threshold= 0.5, N=3  ){
     } else 
       if(modeltype == "classification"){
         calK <- c() 
-        for(jj in 1:length(tb)){
+        for(jj in seq_along(tb)){
           temp <- sample(which(y.orig==tb[jj]))
           K    <- floor(length(temp)*ratio)
           calK <- c(calK, temp[1:K])
@@ -123,12 +123,16 @@ rep_pls <- function( y, X, ncomp=5, ratio=0.75, VIP.threshold= 0.5, N=3  ){
       
       is.selected[variables[VIP.index]] <- FALSE
       variables     <- which( is.selected ) 
-      Variable.list <- c(Variable.list, list(variables)) 
-      Zcal  <- Zcal[,VIP.index]
-      Ztest <- Ztest[,VIP.index]
+      Zcal  <- Zcal[,-VIP.index, drop=FALSE]
+      Ztest <- Ztest[,-VIP.index, drop=FALSE]
       indd  <- unique( which(apply(Zcal, 2, var)==0),which(apply(Ztest, 2, var)==0))
-      Zcal  <- Zcal[, -indd] 
-      Ztest <- Ztest[, -indd] 
+      if(length(indd)>0){
+        is.selected[variables[indd]] <- FALSE
+        variables <- which(is.selected)
+        Zcal  <- Zcal[, -indd] 
+        Ztest <- Ztest[, -indd] 
+      }
+      Variable.list <- c(Variable.list, list(variables)) 
       if( ncol(Zcal) <= ncomp+1 ){  # terminates if less than (ncomp+1) variables remain
         terminated <- TRUE
       } 

@@ -238,14 +238,12 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
   X <- unclass(as.matrix(X))
   
   n <- dim(X)[1]
-  p <- dim(X)[2]
 
   modeltype <- "prediction"
   if (is.factor(y)) {
     modeltype <- "classification"
     y.orig <- as.numeric(y)
     y      <- model.matrix(~ y-1)
-    tb     <- as.numeric(names(table(y)))
   }
   
   ncomp.opt <- ncomp.opt[1]
@@ -279,7 +277,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$LW$RMSECV <- numeric(length(LW.threshold))
       names(selections$LW$comps)  <- LW.threshold
       names(selections$LW$RMSECV) <- LW.threshold
-      for(i in 1:length(LW.threshold)){
+      for(i in seq_along(LW.threshold)){
         selections$LW[[i+2]] <- simplify(which(LWvalues > LW.threshold[i]))
         if(length(selections$LW[[i+2]]) < ncomp)
           selections$LW[[i+2]] <- simplify(order(LWvalues, decreasing = TRUE)[1:ncomp])
@@ -313,7 +311,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$RC$RMSECV <- numeric(length(RC.threshold))
       names(selections$RC$comps)  <- RC.threshold
       names(selections$RC$RMSECV) <- RC.threshold
-      for(i in 1:length(RC.threshold)){
+      for(i in seq_along(RC.threshold)){
         selections$RC[[i+2]] <- simplify(which(RCvalues > RC.threshold[i]))
         if(length(selections$RC[[i+2]]) < ncomp)
           selections$RC[[i+2]] <- simplify(order(RCvalues, decreasing = TRUE)[1:ncomp])
@@ -347,7 +345,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$URC$RMSECV <- numeric(length(URC.threshold))
       names(selections$URC$comps)  <- URC.threshold
       names(selections$URC$RMSECV) <- URC.threshold
-      for(i in 1:length(URC.threshold)){
+      for(i in seq_along(URC.threshold)){
         selections$URC[[i+2]] <- simplify(which(URCvalues > URC.threshold[i]))
         if(length(selections$URC[[i+2]]) < ncomp)
           selections$URC[[i+2]] <- simplify(order(URCvalues, decreasing = TRUE)[1:ncomp])
@@ -381,7 +379,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$FRC$RMSECV <- numeric(length(FRC.threshold))
       names(selections$FRC$comps)  <- FRC.threshold
       names(selections$FRC$RMSECV) <- FRC.threshold
-      for(i in 1:length(FRC.threshold)){
+      for(i in seq_along(FRC.threshold)){
         selections$FRC[[i+2]] <- simplify(which(FRCvalues > FRC.threshold[i]))
         if(length(selections$FRC[[i+2]]) < ncomp)
           selections$FRC[[i+2]] <- simplify(order(FRCvalues, decreasing = TRUE)[1:ncomp])
@@ -415,7 +413,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$VIP$RMSECV <- numeric(length(VIP.threshold))
       names(selections$VIP$comps)  <- VIP.threshold
       names(selections$VIP$RMSECV) <- VIP.threshold
-      for(i in 1:length(VIP.threshold)){
+      for(i in seq_along(VIP.threshold)){
         selections$VIP[[i+2]] <- simplify(which(VIPvalues > VIP.threshold[i]))
         if(length(selections$VIP[[i+2]]) < ncomp)
           selections$VIP[[i+2]] <- simplify(order(VIPvalues, decreasing = TRUE)[1:ncomp])
@@ -449,7 +447,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$SR$RMSECV <- numeric(length(SR.threshold))
       names(selections$SR$comps)  <- SR.threshold
       names(selections$SR$RMSECV) <- SR.threshold
-      for(i in 1:length(SR.threshold)){
+      for(i in seq_along(SR.threshold)){
         selections$SR[[i+2]] <- simplify(which(SRvalues > SR.threshold[i]))
         if(length(selections$SR[[i+2]]) < ncomp)
           selections$SR[[i+2]] <- simplify(order(SRvalues, decreasing = TRUE)[1:ncomp])
@@ -483,7 +481,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$sMC$RMSECV <- numeric(length(sMC.threshold))
       names(selections$sMC$comps)  <- sMC.threshold
       names(selections$sMC$RMSECV) <- sMC.threshold
-      for(i in 1:length(sMC.threshold)){
+      for(i in seq_along(sMC.threshold)){
         selections$sMC[[i+2]] <- simplify(which(sMCvalues > sMC.threshold[i]))
         if(length(selections$sMC[[i+2]]) < ncomp)
           selections$sMC[[i+2]] <- simplify(order(sMCvalues, decreasing = TRUE)[1:ncomp])
@@ -517,7 +515,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$JT$RMSECV <- numeric(length(JT.threshold))
       names(selections$JT$comps)  <- JT.threshold
       names(selections$JT$RMSECV) <- JT.threshold
-      for(i in 1:length(JT.threshold)){
+      for(i in seq_along(JT.threshold)){
         selections$JT[[i+2]] <- simplify(which(JTvalues > JT.threshold[i]))
         if(length(selections$JT[[i+2]]) < ncomp)
           selections$JT[[i+2]] <- simplify(order(JTvalues, decreasing = TRUE)[1:ncomp])
@@ -551,7 +549,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$mRMR$RMSECV <- numeric(length(mRMR.threshold))
       names(selections$mRMR$comps)  <- mRMR.threshold
       names(selections$mRMR$RMSECV) <- mRMR.threshold
-      for(i in 1:length(mRMR.threshold)){
+      for(i in seq_along(mRMR.threshold)){
         selections$mRMR[[i+2]] <- simplify(mRMRvalues[1:mRMR.threshold])#which(mRMRvalues > mRMR.threshold[i]))
         if(length(selections$mRMR[[i+2]]) < ncomp)
           selections$mRMR[[i+2]] <- simplify(mRMRvalues[1:ncomp])
@@ -585,7 +583,7 @@ filterPLSR <- function(y, X, ncomp = 10, ncomp.opt = c("minimum","same"), valida
       selections$WVC$RMSECV <- numeric(length(WVC.threshold))
       names(selections$WVC$comps)  <- WVC.threshold
       names(selections$WVC$RMSECV) <- WVC.threshold
-      for(i in 1:length(WVC.threshold)){
+      for(i in seq_along(WVC.threshold)){
         selections$WVC[[i+2]] <- simplify(which(WVCvalues > WVC.threshold[i]))
         if(length(selections$WVC[[i+2]]) < ncomp)
           selections$WVC[[i+2]] <- simplify(order(WVCvalues, decreasing = TRUE)[1:ncomp])

@@ -49,7 +49,6 @@ ipw_pls <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.01, filter="RC",
   
   if(is.factor(y)) {
     modeltype <- "classification"
-    tb <- as.numeric(names(table(y)))
     y.orig <- y
     y <- model.matrix(~y-1,data.frame(y=y))
   } else {
@@ -66,9 +65,8 @@ ipw_pls <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.01, filter="RC",
     Xorig <- X
   }
   z <- s/sum(s) # First scaling, before PLS
-  rem <- numeric(0)
   early_stopping <- FALSE
-  for(i in 1:no.iter){
+  for(i in seq_len(no.iter)){
     # Rescaling
     X  <- Xorig*rep(z,each=n)
     
@@ -119,7 +117,6 @@ ipw_pls_legacy <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.1){
   
   if(is.factor(y)) {
     modeltype <- "classification"
-    tb <- as.numeric(names(table(y)))
     y.orig <- y
     y <- model.matrix(~y-1,data.frame(y=y))
   } else {
@@ -127,7 +124,7 @@ ipw_pls_legacy <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.1){
     y <- scale(y)
   }
   #X<- scale(X)
-  for(i in 1:no.iter){
+  for(i in seq_len(no.iter)){
     pls.object <- plsr(y ~ X, ncomp=ncomp, validation = "CV")
     if (modeltype == "prediction"){
       opt.comp <- which.min(pls.object$validation$PRESS[1,])
@@ -140,7 +137,6 @@ ipw_pls_legacy <- function(y, X, ncomp=10, no.iter=10, IPW.threshold=0.1){
     # pls.fit  <- plsr(y ~ X, ncomp=opt.comp)
     # RC <- pls.fit$coef[,1,opt.comp]	
     RC <- pls.object$coef[,1,opt.comp]	
-    SD <- apply(X, 2, sd)
     X  <- X*RC
   }
   ipw.selection <- which(abs(RC) >= IPW.threshold)
